@@ -1,5 +1,17 @@
-import { createApp } from 'vue'
-import './style.css'
-import App from './App.vue'
+import { createApp } from "vue";
+import "./style.css";
+import "./assets/reset.css";
+import { getTodos } from "./util/api";
+import { tasks, info } from "./store";
+import App from "./App.vue";
 
-createApp(App).mount('#app')
+const app = createApp(App);
+
+app.directive("focus", {
+  mounted(el) {
+    el.focus();
+  },
+});
+getTodos("all", tasks, info);
+
+app.mount("#app");
