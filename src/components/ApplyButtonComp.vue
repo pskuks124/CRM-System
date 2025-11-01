@@ -1,19 +1,22 @@
 <script setup lang="ts">
 import { Todo, putTodos, TodoRequest } from "../util/api";
-import { formValidate, tasks } from "../store";
-defineProps<{ item: Todo }>();
-
-function applyEdit(item: Todo) {
+import { formValidate } from "../store";
+import { type State } from "../store";
+defineProps<{
+  state: State;
+  item: Todo;
+}>();
+function applyEdit(item: Todo, state: State) {
   const body = JSON.stringify(new TodoRequest(item.title, item.isDone));
   console.log(body);
   if (formValidate(item.title)) {
-    putTodos(item.id, body, tasks);
+    putTodos(item.id, body, state);
     delete item.initialTitle;
   }
 }
 </script>
 <template>
-  <div class="apply-task-container" @click="applyEdit(item)">
+  <div class="apply-task-container" @click="applyEdit(item, state)">
     <div>✓</div>
   </div>
 </template>

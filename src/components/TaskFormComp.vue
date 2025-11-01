@@ -1,18 +1,21 @@
 <script setup lang="ts">
 import { ref } from "vue";
 import { postTodos, TodoRequest } from "../util/api";
-import { formText, tasks, formValidate } from "../store";
+import { formValidate, type State } from "../store";
 
+defineProps<{
+  state: State;
+}>();
 const error = ref(true);
 
-function addTask(text: string) {
+function addTask(text: string, state: State) {
   console.log("addtask start");
   error.value = formValidate(text);
   if (error.value) {
     const body = JSON.stringify(new TodoRequest(text.trim(), false));
     console.log(body);
-    postTodos(body, tasks);
-    formText.value = "";
+    postTodos(body, state);
+    text = "";
   }
 }
 </script>
@@ -20,13 +23,13 @@ function addTask(text: string) {
 <template>
   <div class="task-form-container">
     <form
-      @submit.prevent="addTask(formText)"
+      @submit.prevent="addTask(state.formText, state)"
       @click.stop
       class="form"
       action=""
     >
       <input
-        v-model.trim="formText"
+        v-model.trim="state.formText"
         class="input"
         type="text"
         placeholder="Task To Be Done..."

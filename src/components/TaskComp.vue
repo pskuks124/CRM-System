@@ -5,13 +5,16 @@ import DeleteTaskContainer from "./DeleteTaskComp.vue";
 import { Todo, TodoRequest, putTodos } from "../util/api";
 import ApplyButtonComp from "./ApplyButtonComp.vue";
 import CancelButtonComp from "./CancelButtonComp.vue";
-import { tasks } from "../store";
+import { type State } from "../store";
 
-defineProps<{ item: Todo }>();
+defineProps<{
+  state: State;
+  item: Todo;
+}>();
 
-const statusToggle = (item: Todo) => {
+const statusToggle = (item: Todo, state: State) => {
   const body = JSON.stringify(new TodoRequest(item.title, !item.isDone));
-  putTodos(item.id, body, tasks);
+  putTodos(item.id, body, state);
 };
 
 function cancelOnBlur(item: Todo) {
@@ -30,7 +33,7 @@ function cancelEdit(item: Todo) {
 
 <template>
   <div class="task-container">
-    <div @click="statusToggle(item)" class="status-mark">
+    <div @click="statusToggle(item, state)" class="status-mark">
       <div v-if="item.isDone" class="status-fill">
         <span class="checkmark">✓</span>
       </div>
@@ -44,7 +47,7 @@ function cancelEdit(item: Todo) {
     </div>
     <input
       v-else
-      v-model="item.title"
+      v-model.trim="item.title"
       v-focus
       @blur="cancelOnBlur(item)"
       type="text"
@@ -53,10 +56,10 @@ function cancelEdit(item: Todo) {
     />
     <ButtonsSectionComp v-if="!item.initialTitle">
       <EditTaskComp :item="item" />
-      <DeleteTaskContainer :item="item" />
+      <DeleteTaskContainer :item="item" :state="state" />
     </ButtonsSectionComp>
     <ButtonsSectionComp v-else>
-      <ApplyButtonComp :item="item" />
+      <ApplyButtonComp :item="item" :state="state" />
       <CancelButtonComp :item="item" />
     </ButtonsSectionComp>
   </div>

@@ -1,5 +1,4 @@
-import type { Reactive, Ref } from "vue";
-import { sortType, info } from "../store";
+import type { State } from "../store";
 
 const url = "https://easydev.club/api/v1";
 
@@ -50,7 +49,7 @@ class Options {
   }
 }
 
-function postTodos(bodyData: BodyInit, tasks: Ref) {
+function postTodos(bodyData: BodyInit, state: State) {
   fetch(`${url}/todos`, new Options("POST", bodyData))
     .then(
       (result) => result.json(),
@@ -58,11 +57,11 @@ function postTodos(bodyData: BodyInit, tasks: Ref) {
     )
     .then((result) => {
       console.log(`POST went successful, ${result}`);
-      getTodos(sortType.value, tasks, info);
+      getTodos(state.sortType, state);
     });
 }
 
-function putTodos(id: number, bodyData: BodyInit, tasks: Ref) {
+function putTodos(id: number, bodyData: BodyInit, state: State) {
   fetch(`${url}/todos/${id}`, new Options("PUT", bodyData))
     .then(
       (result) => result.json(),
@@ -70,14 +69,14 @@ function putTodos(id: number, bodyData: BodyInit, tasks: Ref) {
     )
     .then(
       (result) => {
-        getTodos(sortType.value, tasks, info);
+        getTodos(state.sortType, state);
         console.log(`success, ${result}`);
       },
       (error) => console.log(`error2, ${error}`),
     );
 }
 
-function deleteTodos(id: number, tasks: Ref) {
+function deleteTodos(id: number, state: State) {
   fetch(`${url}/todos/${id}`, new Options("DELETE"))
     .then(
       (result) => result.text(),
@@ -86,17 +85,13 @@ function deleteTodos(id: number, tasks: Ref) {
     .then(
       (result) => {
         console.log(result);
-        getTodos(sortType.value, tasks, info);
+        getTodos(state.sortType, state);
       },
       (error) => console.log(`error2, ${error}`),
     );
 }
 
-function getTodos(
-  string: keyof TodoInfo,
-  tasks: Ref,
-  info: Reactive<TodoInfo>,
-) {
+function getTodos(string: keyof TodoInfo, state: State) {
   fetch(`${url}/todos?filter=${string}`, new Options("GET"))
     .then(
       (result) => result.json(),
@@ -104,10 +99,10 @@ function getTodos(
     )
     .then((result) => {
       if (result.data)
-        tasks.value.splice(0, tasks.value.length, ...result.data);
+        state.tasks.splice(0, state.tasks.length, ...result.data);
       if (result.info) {
         for (let type in result.info)
-          info[type as keyof TodoInfo] = result.info[type];
+          state.info[type as keyof TodoInfo] = result.info[type];
       }
     });
 }

@@ -1,38 +1,42 @@
 <script setup lang="ts">
 import { getTodos, type TodoInfo } from "../util/api";
-import { tasks, info, sortType } from "../store";
+import { type State } from "../store";
 
-function showTodos(type: keyof TodoInfo) {
-  sortType.value = type;
-  getTodos(type, tasks, info);
+defineProps<{
+  state: State;
+}>();
+
+function showTodos(type: keyof TodoInfo, state: State) {
+  state.sortType = type;
+  getTodos(type, state);
 }
 </script>
 
 <template>
   <div class="task-sort-container">
     <div
-      @click="showTodos('all')"
-      :class="{ selected: sortType === 'all' }"
+      @click="showTodos('all', state)"
+      :class="{ selected: state.sortType === 'all' }"
       class="all-button"
       role="button"
     >
-      Все ({{ info.all }})
+      Все ({{ state.info.all }})
     </div>
     <div
-      @click="showTodos('inWork')"
-      :class="{ selected: sortType === 'inWork' }"
+      @click="showTodos('inWork', state)"
+      :class="{ selected: state.sortType === 'inWork' }"
       class="in-work-button"
       role="button"
     >
-      в работе({{ info.inWork }})
+      в работе({{ state.info.inWork }})
     </div>
     <div
-      @click="showTodos('completed')"
-      :class="{ selected: sortType === 'completed' }"
+      @click="showTodos('completed', state)"
+      :class="{ selected: state.sortType === 'completed' }"
       class="done-button"
       role="button"
     >
-      сделано({{ info.completed }})
+      сделано({{ state.info.completed }})
     </div>
   </div>
 </template>

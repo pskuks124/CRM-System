@@ -1,21 +1,28 @@
 <script setup lang="ts">
 import deleteSVGComp from "../assets/deleteSVGComp.vue";
-import { tasks } from "../store";
 import { Todo, deleteTodos } from "../util/api";
+import { type State } from "../store";
 
-defineProps<{ item: Todo }>();
+defineProps<{
+  state: State;
+  item: Todo;
+}>();
 
-function deleteTask(item: Todo) {
-  deleteTodos(item.id, tasks);
-  tasks.value.splice(
-    tasks.value.findIndex((task) => task.id === item.id),
+function deleteTask(item: Todo, state: State) {
+  deleteTodos(item.id, state);
+  state.tasks.splice(
+    state.tasks.findIndex((task) => task.id === item.id),
     1,
   );
 }
 </script>
 
 <template>
-  <div @click="deleteTask(item)" class="delete-task-container" role="button">
+  <div
+    @click="deleteTask(item, state)"
+    class="delete-task-container"
+    role="button"
+  >
     <deleteSVGComp />
   </div>
 </template>

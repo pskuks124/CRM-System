@@ -1,12 +1,16 @@
 <script setup lang="ts">
 import TaskComp from "./TaskComp.vue";
-import { tasks } from "../store";
+import { type State } from "../store";
+
+defineProps<{
+  state: State;
+}>();
 </script>
 
 <template>
   <div class="task-arr-container">
-    <div v-for="item in tasks">
-      <TaskComp :item="item" />
+    <div v-for="item in state.tasks">
+      <TaskComp :item="item" :state="state" />
     </div>
   </div>
 </template>

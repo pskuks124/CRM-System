@@ -1,12 +1,17 @@
 <script setup lang="ts">
 import TaskSortComp from "./TaskSortComp.vue";
 import TaskArrComp from "./TaskArrComp.vue";
+import type { State } from "../store";
+
+defineProps<{
+  state: State;
+}>();
 </script>
 
 <template>
   <div class="task-list-container">
-    <TaskSortComp />
-    <TaskArrComp />
+    <TaskSortComp :state="state" />
+    <TaskArrComp :state="state" />
   </div>
 </template>
 
