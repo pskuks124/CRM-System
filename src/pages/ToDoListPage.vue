@@ -1,9 +1,9 @@
 <script setup lang="ts">
 import { reactive } from "vue";
-import TaskFormComp from "./TaskFormComp.vue";
-import TaskListComp from "./TaskListComp.vue";
+import TaskFormComp from "../components/TaskFormComp.vue";
 import { getTodos } from "../util/api";
-import { type State } from "../store";
+import { type State } from "../types/types";
+import DisplayComp from "../components/DisplayComp.vue";
 
 const state = reactive<State>({
   formText: "",
@@ -11,14 +11,19 @@ const state = reactive<State>({
   info: { all: 0, inWork: 0, completed: 0 },
   sortType: "all",
 });
-getTodos("all", state);
+// setInterval(() => {
+// for (const property in state) {
+// console.log(state[property as keyof State]);
+// }
+getTodos(state);
+// }, 1000);
 </script>
 
 <template>
   <div class="app">
     <div class="container">
       <TaskFormComp :state="state" />
-      <TaskListComp :state="state" />
+      <DisplayComp :state="state" />
     </div>
   </div>
 </template>

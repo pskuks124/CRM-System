@@ -1,33 +1,30 @@
 <script setup lang="ts">
 import { ref } from "vue";
-import { postTodos, TodoRequest } from "../util/api";
-import { formValidate, type State } from "../store";
+import { formValidate } from "../store";
+import { postTodos } from "../util/api";
+import { type State, TodoRequest } from "../types/types";
 
 defineProps<{
   state: State;
 }>();
 const error = ref(true);
 
-function addTask(text: string, state: State) {
+function addTask(state: State) {
   console.log("addtask start");
-  error.value = formValidate(text);
+  error.value = formValidate(state.formText);
   if (error.value) {
-    const body = JSON.stringify(new TodoRequest(text.trim(), false));
-    console.log(body);
+    const body = JSON.stringify(new TodoRequest(state.formText.trim(), false));
+    console.log(`body:${body}, initial text: ${state.formText}`);
     postTodos(body, state);
-    text = "";
+    state.formText = "";
+    console.log(`changed text: ${state.formText}`);
   }
 }
 </script>
 
 <template>
   <div class="task-form-container">
-    <form
-      @submit.prevent="addTask(state.formText, state)"
-      @click.stop
-      class="form"
-      action=""
-    >
+    <form @submit.prevent="addTask(state)" @click.stop class="form" action="">
       <input
         v-model.trim="state.formText"
         class="input"
@@ -72,6 +69,9 @@ function addTask(text: string, state: State) {
   color: #fff;
   border: none;
   font-size: 18px;
+}
+.add-button:hover {
+  cursor: pointer;
 }
 .error {
   height: 14px;

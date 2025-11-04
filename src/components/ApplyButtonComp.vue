@@ -1,7 +1,7 @@
 <script setup lang="ts">
-import { Todo, putTodos, TodoRequest } from "../util/api";
+import { putTodos } from "../util/api";
 import { formValidate } from "../store";
-import { type State } from "../store";
+import { type State, TodoRequest, Todo } from "../types/types";
 defineProps<{
   state: State;
   item: Todo;
@@ -33,5 +33,8 @@ function applyEdit(item: Todo, state: State) {
   background-color: #5393ff;
   font-size: 18px;
   color: #fff;
+}
+.apply-task-container:hover {
+  cursor: pointer;
 }
 </style>

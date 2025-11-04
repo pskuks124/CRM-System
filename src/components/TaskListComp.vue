@@ -1,7 +1,6 @@
 <script setup lang="ts">
-import TaskSortComp from "./TaskSortComp.vue";
-import TaskArrComp from "./TaskArrComp.vue";
-import type { State } from "../store";
+import TaskComp from "./TaskComp.vue";
+import { type State } from "../types/types";
 
 defineProps<{
   state: State;
@@ -9,18 +8,17 @@ defineProps<{
 </script>
 
 <template>
-  <div class="task-list-container">
-    <TaskSortComp :state="state" />
-    <TaskArrComp :state="state" />
+  <div class="task-arr-container">
+    <div v-for="item in state.tasks">
+      <TaskComp :item="item" :state="state" />
+    </div>
   </div>
 </template>
 
 <style scoped>
-.task-list-container {
+.task-arr-container {
   display: flex;
   flex-direction: column;
   width: 100%;
-  padding: 0 20px 0 10px;
-  font-size: 30px;
 }
 </style>

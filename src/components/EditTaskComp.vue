@@ -1,11 +1,10 @@
 <script setup lang="ts">
-import { Todo } from "../util/api";
 import editSVGComp from "../assets/editSVGComp.vue";
+import { Todo } from "../types/types";
 
 defineProps<{ item: Todo }>();
 
 function editStart(item: Todo) {
-  console.log("edittask start");
   item.initialTitle = item.title;
 }
 </script>
@@ -39,5 +38,8 @@ function editStart(item: Todo) {
   height: 100%;
   font-size: 18px;
   color: #fff;
+}
+.click-container:hover {
+  cursor: pointer;
 }
 </style>

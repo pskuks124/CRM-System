@@ -1,9 +1,9 @@
 <script setup lang="ts">
-import ToDoAppComp from "./components/ToDoAppComp.vue";
+import ToDoListPage from "./pages/ToDoListPage.vue";
 </script>
 
 <template>
-  <ToDoAppComp />
+  <ToDoListPage />
 </template>
 
 <style scoped></style>

@@ -2,10 +2,10 @@
 import ButtonsSectionComp from "./ButtonsSectionComp.vue";
 import EditTaskComp from "./EditTaskComp.vue";
 import DeleteTaskContainer from "./DeleteTaskComp.vue";
-import { Todo, TodoRequest, putTodos } from "../util/api";
+import { putTodos } from "../util/api";
+import { type Todo, type State, TodoRequest } from "../types/types";
 import ApplyButtonComp from "./ApplyButtonComp.vue";
 import CancelButtonComp from "./CancelButtonComp.vue";
-import { type State } from "../store";
 
 defineProps<{
   state: State;

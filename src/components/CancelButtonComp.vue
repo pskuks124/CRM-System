@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { Todo } from "../util/api";
+import { Todo } from "../types/types";
 
 defineProps<{ item: Todo }>();
 
@@ -28,5 +28,8 @@ function cancelEdit(item: Todo) {
   background-color: #ff6757;
   font-size: 18px;
   color: #fff;
+}
+.cancel-task-container:hover {
+  cursor: pointer;
 }
 </style>

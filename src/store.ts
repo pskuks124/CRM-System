@@ -1,11 +1,3 @@
-import { Todo, type TodoInfo } from "./util/api";
-interface State {
-  formText: string;
-  tasks: Todo[];
-  info: TodoInfo;
-  sortType: keyof TodoInfo;
-}
-
 function formValidate(text: string) {
   console.log("formvalidate start");
   if (text.length >= 2 && text.length <= 64) {
@@ -15,4 +7,4 @@ function formValidate(text: string) {
   }
 }
 
-export { formValidate, type State };
+export { formValidate };

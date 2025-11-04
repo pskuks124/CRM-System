@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import deleteSVGComp from "../assets/deleteSVGComp.vue";
-import { Todo, deleteTodos } from "../util/api";
-import { type State } from "../store";
+import { deleteTodos } from "../util/api";
+import { type State, Todo } from "../types/types";
 
 defineProps<{
   state: State;
@@ -37,5 +37,8 @@ function deleteTask(item: Todo, state: State) {
   width: 50px;
   height: 50px;
   background-color: #ff6757;
+}
+.delete-task-container:hover {
+  cursor: pointer;
 }
 </style>
