@@ -1,32 +1,11 @@
-interface State {
-  formText: string;
-  tasks: Todo[];
-  info: TodoInfo;
-  sortType: keyof TodoInfo;
-}
+type TodoRequest = Partial<Omit<Todo, "id" | "created">>;
 
-class TodoRequest {
-  title: string;
-  isDone: boolean;
-  constructor(titleData: string, isDoneData: boolean) {
-    this.title = titleData;
-    this.isDone = isDoneData;
-  }
-}
-class Todo extends TodoRequest {
+interface Todo {
   id: number;
+  title: string;
   created: string;
-  initialTitle?: string;
-  constructor(
-    titleData: string,
-    isDoneData: boolean,
-    idData: number,
-    createdData: string,
-  ) {
-    super(titleData, isDoneData);
-    this.id = idData;
-    this.created = createdData;
-  }
+  isDone: boolean;
+  inEdit?: boolean;
 }
 
 interface TodoInfo {
@@ -35,27 +14,17 @@ interface TodoInfo {
   inWork: number;
 }
 
-interface MetaResponse {
-  data: Todo[];
-  info?: TodoInfo;
+interface MetaResponse<T, N> {
+  data: T[];
+  info?: N;
   meta: {
     totalAmount: number;
   };
 }
 
 interface Tab {
-  displayed: string;
-  name: keyof TodoInfo;
+  name: string;
+  key: keyof TodoInfo;
 }
 
-class Options {
-  method: string;
-  body?: BodyInit;
-  constructor(methodData: string, bodyData?: BodyInit) {
-    this.method = methodData;
-    this.body = bodyData;
-  }
-}
-
-export type { TodoInfo, MetaResponse, State, Tab };
-export { Todo, TodoRequest, Options };
+export type { Todo, TodoRequest, TodoInfo, MetaResponse, Tab };

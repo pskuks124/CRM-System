@@ -1,30 +1,19 @@
 <script setup lang="ts">
-import { getTodos } from "../util/api";
-import type { TodoInfo, State, Tab } from "../types/types";
+import type { TodoInfo, Tab } from "../types/types";
 import { computed } from "vue";
 
 const prop = defineProps<{
-  state: State;
   tab: Tab;
+  filter: keyof TodoInfo;
 }>();
 
 const isSelected = computed(() => {
-  return prop.state.sortType === prop.tab.name;
+  return prop.filter === prop.tab.key;
 });
-const className = prop.tab.name;
-
-function showTodos(type: keyof TodoInfo, state: State) {
-  state.sortType = type;
-  getTodos(state);
-}
 </script>
 <template>
-  <div
-    @click="showTodos(tab.name, state)"
-    :class="{ selected: isSelected, className }"
-    role="button"
-  >
-    {{ tab.displayed }} ({{ state.info[tab.name] }})
+  <div :class="{ selected: isSelected }" role="button">
+    <slot></slot>
   </div>
 </template>
 <style scoped>

@@ -11,6 +11,6 @@
   display: flex;
   flex-direction: row;
   justify-content: space-between;
-  width: 25%;
+  width: 8.5rem;
 }
 </style>
