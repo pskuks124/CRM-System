@@ -65,16 +65,19 @@ const deleteTask = async (id: number): Promise<void> => {
       <input :checked="isDone" class="checkmark-input" type="checkbox" />
       <span @click="updateStatus" class="status-fill">✓</span>
     </label>
-    <form @submit.prevent="applyEdit(todo)" :id="`editForm${todo.id}`">
-      <input
-        :disabled="!inEditing"
-        ref="input"
-        v-model.trim="todoTitle"
-        type="text"
-        class="edit-input"
-        :class="{ done: isDone }"
-      />
-    </form>
+    <div class="form-container">
+      <form @submit.prevent="applyEdit(todo)" :id="`editForm${todo.id}`">
+        <input
+          :disabled="!inEditing"
+          ref="input"
+          v-model.trim="todoTitle"
+          type="text"
+          class="edit-input"
+          :class="{ done: isDone }"
+        />
+      </form>
+      <p class="error">{{ errorMessage }}</p>
+    </div>
 
     <ButtonsSection v-if="!inEditing">
       <TheButton @click="toggleEdit()" :bckg="'#5393ff'">
@@ -131,6 +134,16 @@ const deleteTask = async (id: number): Promise<void> => {
 }
 input:checked + .status-fill {
   background-color: #5393ff;
+}
+.form-container {
+  display: flex;
+  flex-direction: column;
+}
+.error {
+  font-size: 0.875rem;
+  height: 14px;
+  color: red;
+  margin-left: 2.5rem;
 }
 .task-name,
 .edit-input {
