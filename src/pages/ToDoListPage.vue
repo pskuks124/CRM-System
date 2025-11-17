@@ -1,27 +1,24 @@
 <script setup lang="ts">
-import { type Ref, type Reactive, ref, reactive, onMounted } from "vue";
+import { ref, reactive, onMounted } from "vue";
 import TaskForm from "../components/TaskForm.vue";
 import { getTodos } from "../api/api";
 import TabList from "../components/TabList.vue";
 import TaskList from "../components/TaskList.vue";
-import type { Todo, TodoInfo } from "../types/types";
+import type { Todo, TodoInfo, filter } from "../types/types";
 
-const tasks: Ref<Todo[]> = ref([]);
-const info: Reactive<TodoInfo> = reactive({ all: 0, inWork: 0, completed: 0 });
-const filter: Ref<keyof TodoInfo> = ref("all");
+const tasks = ref<Todo[]>([]);
+let info = reactive<TodoInfo>({ all: 0, inWork: 0, completed: 0 });
+const filter = ref<filter>("all");
 
-const updateTasks = async (passedFilter?: keyof TodoInfo): Promise<void> => {
+const updateTasks = async (passedFilter?: filter): Promise<void> => {
   try {
     if (passedFilter) {
       filter.value = passedFilter;
     }
     const response = await getTodos(filter.value);
-    tasks.value.splice(0, tasks.value.length, ...response.data);
-
+    tasks.value = response.data;
     if (response.info) {
-      info.all = response.info.all;
-      info.inWork = response.info.inWork;
-      info.completed = response.info.completed;
+      info = response.info;
     }
   } catch {
     alert("Ошибка при получении данных");
@@ -34,9 +31,9 @@ onMounted(async () => updateTasks(filter.value));
 <template>
   <div class="app">
     <div class="container">
-      <TaskForm :updateTasks="updateTasks" />
-      <TabList :info="info" :filter="filter" @updateTasks="updateTasks" />
-      <TaskList :tasks="tasks" :updateTasks="updateTasks" />
+      <TaskForm @refreshRequired="updateTasks" />
+      <TabList :info="info" :filter="filter" @refreshRequired="updateTasks" />
+      <TaskList :tasks="tasks" @refreshRequired="updateTasks" />
     </div>
   </div>
 </template>

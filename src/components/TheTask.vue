@@ -3,19 +3,21 @@ import { ref } from "vue";
 import ButtonsSection from "./ButtonsSection.vue";
 import { formValidate } from "../util/store";
 import { putTodos, deleteTodos } from "../api/api";
-import type { Todo, TodoInfo } from "../types/types";
-import TheButton from "./TheButton.vue";
+import type { Todo, filter } from "../types/types";
+import TheButton from "./UI/TheButton.vue";
 import EditSVGComp from "../assets/editSVGComp.vue";
 import DeleteSVGComp from "../assets/deleteSVGComp.vue";
 
 const props = defineProps<{
-  updateTasks: (passedFilter?: keyof TodoInfo) => Promise<void>;
   todo: Todo;
+}>();
+
+const emit = defineEmits<{
+  (e: "refreshRequired", passedFilter?: filter): Promise<void>;
 }>();
 
 const inEditing = ref(false);
 const todoTitle = ref(props.todo.title);
-const isDone = ref(props.todo.isDone);
 const errorMessage = ref("");
 
 const cancelEdit = () => {
@@ -27,10 +29,11 @@ const toggleEdit = () => {
 };
 const updateStatus = async () => {
   try {
-    const todo = props.todo;
-    todo.isDone = !todo.isDone;
+    console.log(`update started`);
+
+    const todo = { ...props.todo, isDone: !props.todo.isDone };
     await putTodos(todo);
-    await props.updateTasks();
+    await emit("refreshRequired");
   } catch (error) {
     alert("Ошибка при обновлении данных");
   }
@@ -41,7 +44,7 @@ const applyEdit = async (todo: Todo) => {
     try {
       todo.title = todoTitle.value;
       await putTodos(todo);
-      await props.updateTasks();
+      await emit("refreshRequired");
       toggleEdit();
     } catch (error) {
       alert("Ошибка при обновлении данных");
@@ -52,7 +55,7 @@ const applyEdit = async (todo: Todo) => {
 const deleteTask = async (id: number): Promise<void> => {
   try {
     await deleteTodos(id);
-    await props.updateTasks();
+    await emit("refreshRequired");
   } catch (error) {
     alert("Ошибка при удалении данных");
   }
@@ -62,8 +65,8 @@ const deleteTask = async (id: number): Promise<void> => {
 <template>
   <div class="task-container">
     <label class="status-mark">
-      <input :checked="isDone" class="checkmark-input" type="checkbox" />
-      <span @click="updateStatus" class="status-fill">✓</span>
+      <input @change="updateStatus" class="checkmark-input" type="checkbox" />
+      <span class="checkmark" :class="{ checked: props.todo.isDone }">✓</span>
     </label>
     <div class="form-container">
       <form @submit.prevent="applyEdit(todo)" :id="`editForm${todo.id}`">
@@ -73,23 +76,23 @@ const deleteTask = async (id: number): Promise<void> => {
           v-model.trim="todoTitle"
           type="text"
           class="edit-input"
-          :class="{ done: isDone }"
+          :class="{ done: props.todo.isDone }"
         />
       </form>
       <p class="error">{{ errorMessage }}</p>
     </div>
 
     <ButtonsSection v-if="!inEditing">
-      <TheButton @click="toggleEdit()" :bckg="'#5393ff'">
+      <TheButton @click="toggleEdit()" variant="primary">
         <EditSVGComp />
       </TheButton>
-      <TheButton @click="deleteTask(todo.id)" :bckg="'#ff6757'">
+      <TheButton @click="deleteTask(todo.id)" variant="danger">
         <DeleteSVGComp />
       </TheButton>
     </ButtonsSection>
     <ButtonsSection v-else>
-      <TheButton :bckg="'#5393ff'" :form="`editForm${todo.id}`">✓</TheButton>
-      <TheButton @click="cancelEdit()" :bckg="'grey'">X</TheButton>
+      <TheButton variant="primary" :form="`editForm${todo.id}`">✓</TheButton>
+      <TheButton @click="cancelEdit()" variant="secondary">X</TheButton>
     </ButtonsSection>
   </div>
 </template>
@@ -105,7 +108,7 @@ const deleteTask = async (id: number): Promise<void> => {
   border-radius: 10px;
 }
 .status-mark,
-.status-fill {
+.checkmark {
   display: flex;
   flex-direction: row;
   justify-content: center;
@@ -122,7 +125,7 @@ const deleteTask = async (id: number): Promise<void> => {
 .status-mark:hover {
   cursor: pointer;
 }
-.status-fill {
+.checkmark {
   font-size: 0.875rem;
   height: 25px;
   width: 26px;
@@ -132,7 +135,7 @@ const deleteTask = async (id: number): Promise<void> => {
   width: 0px;
   height: 0px;
 }
-input:checked + .status-fill {
+.checked {
   background-color: #5393ff;
 }
 .form-container {

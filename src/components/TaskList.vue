@@ -1,10 +1,13 @@
 <script setup lang="ts">
 import TheTask from "./TheTask.vue";
-import type { Todo, TodoInfo } from "../types/types";
+import type { Todo, filter } from "../types/types";
 
 defineProps<{
-  updateTasks: (passedFilter?: keyof TodoInfo) => Promise<void>;
   tasks: Todo[];
+}>();
+
+const emit = defineEmits<{
+  (e: "refreshRequired", passedFilter?: filter): Promise<void>;
 }>();
 </script>
 
@@ -14,7 +17,7 @@ defineProps<{
       v-for="todo in tasks"
       :todo="todo"
       :key="todo.id"
-      :updateTasks="updateTasks"
+      @refreshRequired="emit('refreshRequired')"
     />
   </div>
 </template>

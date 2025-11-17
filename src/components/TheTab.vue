@@ -1,10 +1,10 @@
 <script setup lang="ts">
-import type { TodoInfo, Tab } from "../types/types";
+import type { TodoTab, filter } from "../types/types";
 import { computed } from "vue";
 
 const prop = defineProps<{
-  tab: Tab;
-  filter: keyof TodoInfo;
+  tab: TodoTab;
+  filter: filter;
 }>();
 
 const isSelected = computed(() => {

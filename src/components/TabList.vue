@@ -1,8 +1,8 @@
 <script setup lang="ts">
-import type { Tab, TodoInfo } from "../types/types";
+import type { TodoTab, filter, TodoInfo } from "../types/types";
 import TheTab from "./TheTab.vue";
 
-const tabs: Tab[] = [
+const tabs: TodoTab[] = [
   { name: "Все", key: "all" },
   { name: "в работе", key: "inWork" },
   { name: "сделано", key: "completed" },
@@ -10,16 +10,14 @@ const tabs: Tab[] = [
 
 defineProps<{
   info: TodoInfo;
-  filter: keyof TodoInfo;
+  filter: filter;
 }>();
 const emit = defineEmits<{
-  (e: "updateTasks", passedFilter?: keyof TodoInfo): Promise<void>;
+  (e: "refreshRequired", passedFilter?: filter): Promise<void>;
 }>();
 
-const handleUpdate = async (
-  tabName?: keyof TodoInfo | undefined,
-): Promise<void> => {
-  emit("updateTasks", tabName);
+const handleUpdate = async (filter?: filter | undefined): Promise<void> => {
+  emit("refreshRequired", filter);
 };
 </script>
 

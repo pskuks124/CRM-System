@@ -2,22 +2,22 @@
 import { ref } from "vue";
 import { formValidate } from "../util/store";
 import { postTodos } from "../api/api";
-import type { TodoInfo } from "../types/types";
+import type { filter } from "../types/types";
 
-const props = defineProps<{
-  updateTasks: (passedFilter?: keyof TodoInfo) => Promise<void>;
+const emit = defineEmits<{
+  (e: "refreshRequired", passedFilter?: filter): Promise<void>;
 }>();
 
 const errorMessage = ref("");
 const formText = ref("");
 
-async function addTask(formText: string) {
-  errorMessage.value = formValidate(formText);
+async function addTask() {
+  errorMessage.value = formValidate(formText.value);
   if (!errorMessage.value) {
     try {
-      await postTodos(formText);
-      await props.updateTasks();
-      formText = "";
+      await postTodos(formText.value);
+      await emit("refreshRequired");
+      formText.value = "";
     } catch {
       alert("Ошибка при отправке данных");
     }
@@ -27,7 +27,7 @@ async function addTask(formText: string) {
 
 <template>
   <div class="task-form-container">
-    <form @submit.prevent="addTask(formText)" @click.stop class="form">
+    <form @submit.prevent="addTask()" @click.stop class="form">
       <input
         v-model.trim="formText"
         class="input"

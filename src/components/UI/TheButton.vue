@@ -1,10 +1,10 @@
 <script setup lang="ts">
-defineProps<{ bckg: string; form?: string }>();
+defineProps<{ variant: "primary" | "secondary" | "danger"; form?: string }>();
 </script>
 <template>
   <button
     class="button-task-container"
-    :style="{ background: bckg }"
+    :class="`button-${variant}`"
     :form="form"
   >
     <slot></slot>
@@ -26,5 +26,14 @@ defineProps<{ bckg: string; form?: string }>();
 }
 .button-task-container:hover {
   cursor: pointer;
+}
+.button-primary {
+  background-color: var(--primary-color);
+}
+.button-secondary {
+  background-color: var(--secondary-color);
+}
+.button-danger {
+  background-color: var(--danger-color);
 }
 </style>

@@ -5,7 +5,6 @@ interface Todo {
   title: string;
   created: string;
   isDone: boolean;
-  inEdit?: boolean;
 }
 
 interface TodoInfo {
@@ -22,9 +21,11 @@ interface MetaResponse<T, N> {
   };
 }
 
-interface Tab {
+interface TodoTab {
   name: string;
-  key: keyof TodoInfo;
+  key: filter;
 }
 
-export type { Todo, TodoRequest, TodoInfo, MetaResponse, Tab };
+type filter = "all" | "inWork" | "completed";
+
+export type { Todo, TodoRequest, TodoInfo, MetaResponse, TodoTab, filter };

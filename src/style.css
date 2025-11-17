@@ -1,9 +1,14 @@
 * {
-    box-sizing: border-box;
-        margin: 0;
-    padding: 0;
-    
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
 }
 *:focus {
-    outline: none;
+  outline: none;
+}
+
+html {
+  --primary-color: #5393ff;
+  --secondary-color: grey;
+  --danger-color: #ff6757;
 }

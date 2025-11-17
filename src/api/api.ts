@@ -1,4 +1,4 @@
-import type { MetaResponse, Todo, TodoInfo } from "../types/types";
+import type { MetaResponse, Todo, TodoInfo, filter } from "../types/types";
 
 const url = "https://easydev.club/api/v1";
 async function postTodos(title: string): Promise<void> {
@@ -12,9 +12,9 @@ async function postTodos(title: string): Promise<void> {
   }
 }
 
-async function putTodos(item: Todo): Promise<void> {
-  const body = JSON.stringify({ title: item.title, isDone: item.isDone });
-  const response = await fetch(`${url}/todos/${item.id}`, {
+async function putTodos(todo: Todo): Promise<void> {
+  const body = JSON.stringify({ title: todo.title, isDone: todo.isDone });
+  const response = await fetch(`${url}/todos/${todo.id}`, {
     method: "PUT",
     body,
   });
@@ -32,10 +32,8 @@ async function deleteTodos(id: number): Promise<void> {
   }
 }
 
-async function getTodos(
-  tab: keyof TodoInfo,
-): Promise<MetaResponse<Todo, TodoInfo>> {
-  const response = await fetch(`${url}/todos?filter=${tab}`, {
+async function getTodos(filter: filter): Promise<MetaResponse<Todo, TodoInfo>> {
+  const response = await fetch(`${url}/todos?filter=${filter}`, {
     method: "GET",
   });
   if (!response.ok) {
