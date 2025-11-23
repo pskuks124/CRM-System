@@ -20,23 +20,22 @@ const handleUpdate = async (filter?: Filter | undefined): Promise<void> => {
 </script>
 
 <template>
-  <div class="task-sort-container"></div>
-  <a-tabs :activeKey="filter" @update:activeKey="handleUpdate">
-    <a-tab-pane
-      :tab="`${tab.name} (${info[tab.key]})`"
-      v-for="tab in tabs"
-      :key="tab.key"
-    >
-    </a-tab-pane>
-  </a-tabs>
+  <div class="task-sort-container">
+    <a-tabs :activeKey="filter" @update:activeKey="handleUpdate">
+      <a-tab-pane
+        :tab="`${tab.name} (${info[tab.key]})`"
+        v-for="tab in tabs"
+        :key="tab.key"
+      >
+      </a-tab-pane>
+    </a-tabs>
+  </div>
 </template>
 
 <style scoped>
 .task-sort-container {
   display: flex;
   flex-direction: row;
-  justify-content: space-between;
-  padding: 0 20px 0 0;
   width: 100%;
 }
 </style>

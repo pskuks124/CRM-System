@@ -17,6 +17,7 @@ const emit = defineEmits<{
 
 const inEditing = ref(false);
 const form = reactive({ text: props.todo.title });
+const loading = ref(false);
 
 const cancelEdit = () => {
   toggleEdit();
@@ -28,11 +29,13 @@ const toggleEdit = () => {
 const updateStatus = async () => {
   try {
     const todo = { ...props.todo, isDone: !props.todo.isDone };
+    loading.value = true;
     await updateTodo(todo);
     await emit("refreshRequired");
   } catch {
     alert("Ошибка при обновлении данных");
   }
+  loading.value = false;
 };
 const applyEdit = async () => {
   try {
@@ -56,72 +59,79 @@ const deleteTask = async (): Promise<void> => {
 </script>
 
 <template>
-  <div class="task-container">
-    <a-form
-      @finish="applyEdit"
-      :id="`editForm${todo.id}`"
-      layout="inline"
-      :model="form"
-      :rules="{
-        text: [
-          {
-            required: true,
-            min: 2,
-            message: 'Текст задачи должен состоять хотя-бы из 2 символов',
-            trigger: 'change',
-          },
-          {
-            max: 64,
-            message: 'Текст задачи не должен превышать 64 символа',
-            trigger: 'change',
-          },
-        ],
-      }"
-    >
+  <a-form
+    @finish="applyEdit"
+    :id="`editForm${todo.id}`"
+    layout="inline"
+    :model="form"
+    :rules="{
+      text: [
+        {
+          required: true,
+          min: 2,
+          message: 'Текст задачи должен состоять хотя-бы из 2 символов',
+          trigger: 'change',
+        },
+        {
+          max: 64,
+          message: 'Текст задачи не должен превышать 64 символа',
+          trigger: 'change',
+        },
+      ],
+    }"
+  >
+    <div class="task-container">
       <a-checkbox
         :checked="todo.isDone"
         @update:checked="updateStatus"
       ></a-checkbox>
 
       <a-form-item name="text">
+        <span
+          v-if="!inEditing"
+          class="task-name"
+          :class="{ done: todo.isDone }"
+          >{{ form.text }}</span
+        >
         <a-input
+          v-else
           v-model:value.trim="form.text"
           size="large"
           class="input"
-          :disabled="!inEditing"
+          :disabled="loading"
         />
       </a-form-item>
-    </a-form>
-    <div v-if="!inEditing">
-      <a-button type="primary" size="large" @click="toggleEdit">
-        <template #icon>
-          <FormOutlined />
-        </template>
-      </a-button>
-      <a-button type="primary" danger size="large" @click="deleteTask">
-        <template #icon>
-          <DeleteOutlined />
-        </template>
-      </a-button>
+      <div v-if="!inEditing">
+        <a-button type="primary" size="large" @click="toggleEdit">
+          <template #icon>
+            <FormOutlined />
+          </template>
+        </a-button>
+        <a-button type="primary" danger size="large" @click="deleteTask">
+          <template #icon>
+            <DeleteOutlined />
+          </template>
+        </a-button>
+      </div>
+      <div v-else>
+        <a-button
+          type="primary"
+          size="large"
+          htmlType="submit"
+          :form="`editForm${todo.id}`"
+        >
+          <template #icon>
+            <CheckOutlined />
+          </template>
+        </a-button>
+        <a-button @click="cancelEdit()" size="large">
+          <template #icon>
+            <CloseOutlined />
+          </template>
+        </a-button>
+      </div>
     </div>
-    <div v-else>
-      <a-button
-        type="primary"
-        size="large"
-        htmlType="submit"
-        :form="`editForm${todo.id}`"
-      >
-        <template #icon>
-          <CheckOutlined />
-        </template>
-      </a-button>
-      <a-button @click="cancelEdit()" size="large">
-        <template #icon>
-          <CloseOutlined />
-        </template>
-      </a-button>
-    </div>
-  </div>
+  </a-form>
 </template>
 
 <style scoped>
@@ -129,8 +139,18 @@ const deleteTask = async (): Promise<void> => {
   display: flex;
   flex-direction: row;
   background-color: #fff;
-  margin: 10px 0;
-  padding: 20px 10px;
+  margin: 0.625rem 0;
+  padding: 1.25rem 0.5rem;
   border-radius: 10px;
+  width: 30rem;
+}
+.task-name {
+  display: inline-block;
+  margin: 0 0.875rem;
+  font-size: 1rem;
+  width: 20rem;
+}
+.done {
+  text-decoration: line-through;
 }
 </style>

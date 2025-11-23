@@ -8,7 +8,7 @@ import DefaultLayout from "../layouts/DefaultLayout.vue";
       <DefaultLayout />
     </nav>
     <div class="divide-container">
-      <main class="todo-list-container"></main>
+      <main class="todo-list-container">Профиль</main>
     </div>
   </div>
 </template>
