@@ -5,7 +5,6 @@ import { refreshTodos } from "../api/api";
 import TabList from "../components/TabList.vue";
 import TaskList from "../components/TaskList.vue";
 import type { Todo, TodoInfo, Filter } from "../types/types";
-import DefaultLayout from "../layouts/DefaultLayout.vue";
 
 const tasks = ref<Todo[]>([]);
 let info = reactive<TodoInfo>({ all: 0, inWork: 0, completed: 0 });
@@ -37,42 +36,9 @@ onMounted(async () => {
 </script>
 
 <template>
-  <div class="todo-list-page-container">
-    <nav class="navigation">
-      <DefaultLayout />
-    </nav>
-    <div class="divide-container">
-      <main class="todo-list-container">
-        <TaskForm @refreshRequired="updateTasks" />
-        <TabList :info="info" :filter="filter" @refreshRequired="updateTasks" />
-        <TaskList :tasks="tasks" @refreshRequired="updateTasks" />
-      </main>
-    </div>
-  </div>
+  <TaskForm @refreshRequired="updateTasks" />
+  <TabList :info="info" :filter="filter" @refreshRequired="updateTasks" />
+  <TaskList :tasks="tasks" @refreshRequired="updateTasks" />
 </template>
 
-<style scoped>
-.todo-list-page-container {
-  display: flex;
-  flex-direction: row;
-  justify-content: space-between;
-  width: 100%;
-}
-.navigation {
-  padding: 30px 0;
-}
-.divide-container {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  width: 110rem;
-}
-.todo-list-container {
-  display: flex;
-  flex-direction: column;
-  padding: 30px 50px 30px 40px;
-  max-width: 650px;
-  font-size: 30px;
-  width: 800px;
-}
-</style>
+<style scoped></style>

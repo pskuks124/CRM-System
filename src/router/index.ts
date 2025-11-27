@@ -1,14 +1,15 @@
-import { createMemoryHistory, createRouter } from "vue-router";
+import { createWebHistory, createRouter } from "vue-router";
 
 import ToDoListPage from "../pages/ToDoListPage.vue";
 import ProfilePage from "../pages/ProfilePage.vue";
+import DefaultLayout from "../layouts/DefaultLayout.vue";
 
 const routes = [
-  { path: "/", component: ToDoListPage },
-  { path: "/profile", component: ProfilePage },
+  { path: "/", component: ToDoListPage, meta: { layout: DefaultLayout } },
+  { path: "/profile", component: ProfilePage, meta: { layout: DefaultLayout } },
 ];
 
 export const router = createRouter({
-  history: createMemoryHistory(),
+  history: createWebHistory(),
   routes,
 });
