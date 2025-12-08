@@ -1,46 +1,27 @@
-import type { MetaResponse, Todo, TodoInfo, filter } from "../types/types";
+import type { MetaResponse, Todo, TodoInfo, Filter } from "../types/types";
+import axios from "axios";
 
-const url = "https://easydev.club/api/v1";
-async function postTodos(title: string): Promise<void> {
-  const body = JSON.stringify({ title, isDone: false });
-  const response = await fetch(`${url}/todos`, {
-    method: "POST",
-    body,
-  });
-  if (!response.ok) {
-    throw new Error();
-  }
+const api = axios.create({ baseURL: "https://easydev.club/api/v1" });
+async function createTodo(title: string): Promise<void> {
+  await api.post("/todos", { title, isDone: false });
 }
 
-async function putTodos(todo: Todo): Promise<void> {
-  const body = JSON.stringify({ title: todo.title, isDone: todo.isDone });
-  const response = await fetch(`${url}/todos/${todo.id}`, {
-    method: "PUT",
-    body,
+async function updateTodo(todo: Todo): Promise<void> {
+  await api.put(`/todos/${todo.id}`, {
+    title: todo.title,
+    isDone: todo.isDone,
   });
-  if (!response.ok) {
-    throw new Error();
-  }
 }
 
-async function deleteTodos(id: number): Promise<void> {
-  const response = await fetch(`${url}/todos/${id}`, {
-    method: "DELETE",
-  });
-  if (!response.ok) {
-    throw new Error();
-  }
+async function deleteTodo(id: number): Promise<void> {
+  await api.delete(`/todos/${id}`);
 }
 
-async function getTodos(filter: filter): Promise<MetaResponse<Todo, TodoInfo>> {
-  const response = await fetch(`${url}/todos?filter=${filter}`, {
-    method: "GET",
-  });
-  if (!response.ok) {
-    throw new Error();
-  }
-  const resData = await response.json();
-  return resData;
+async function refreshTodos(
+  filter: Filter,
+): Promise<MetaResponse<Todo, TodoInfo>> {
+  const response = await api.get(`/todos`, { params: { filter } });
+  return response.data;
 }
 
-export { postTodos, putTodos, deleteTodos, getTodos };
+export { createTodo, updateTodo, deleteTodo, refreshTodos };

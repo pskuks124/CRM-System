@@ -23,9 +23,9 @@ interface MetaResponse<T, N> {
 
 interface TodoTab {
   name: string;
-  key: filter;
+  key: Filter;
 }
 
-type filter = "all" | "inWork" | "completed";
+type Filter = "all" | "inWork" | "completed";
 
-export type { Todo, TodoRequest, TodoInfo, MetaResponse, TodoTab, filter };
+export type { Todo, TodoRequest, TodoInfo, MetaResponse, TodoTab, Filter };
