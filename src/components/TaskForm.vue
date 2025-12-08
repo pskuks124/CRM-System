@@ -5,7 +5,7 @@ import type { Filter } from "../types/types";
 import { showError } from "../util/util";
 
 const emit = defineEmits<{
-  (e: "refreshRequired", passedFilter?: Filter): Promise<void>;
+  (e: "refreshRequired", passedFilter?: Filter): void;
 }>();
 
 const form = reactive({ text: "" });
