@@ -11,10 +11,10 @@ defineProps<{
   filter: Filter;
 }>();
 const emit = defineEmits<{
-  (e: "refreshRequired", passedFilter?: Filter): Promise<void>;
+  (e: "refreshRequired", passedFilter?: Filter): void;
 }>();
 
-const handleUpdate = async (filter?: Filter | undefined): Promise<void> => {
+const handleUpdate = (filter?: Filter): void => {
   emit("refreshRequired", filter);
 };
 </script>

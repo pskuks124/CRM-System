@@ -6,13 +6,14 @@ import { FormOutlined } from "@ant-design/icons-vue";
 import { DeleteOutlined } from "@ant-design/icons-vue";
 import { CheckOutlined } from "@ant-design/icons-vue";
 import { CloseOutlined } from "@ant-design/icons-vue";
+import { showError } from "../util/util";
 
 const props = defineProps<{
   todo: Todo;
 }>();
 
 const emit = defineEmits<{
-  (e: "refreshRequired", passedFilter?: Filter): Promise<void>;
+  (e: "refreshRequired", passedFilter?: Filter): void;
 }>();
 
 const inEditing = ref(false);
@@ -31,9 +32,9 @@ const updateStatus = async () => {
     const todo = { ...props.todo, isDone: !props.todo.isDone };
     loading.value = true;
     await updateTodo(todo);
-    await emit("refreshRequired");
+    emit("refreshRequired");
   } catch {
-    alert("Ошибка при обновлении данных");
+    showError("при изменении");
   }
   loading.value = false;
 };
@@ -41,19 +42,19 @@ const applyEdit = async () => {
   try {
     const todo = { ...props.todo, title: form.text };
     await updateTodo(todo);
-    await emit("refreshRequired");
+    emit("refreshRequired");
     toggleEdit();
   } catch {
-    alert("Ошибка при обновлении данных");
+    showError("при изменении");
   }
 };
 
 const deleteTask = async (): Promise<void> => {
   try {
     await deleteTodo(props.todo.id);
-    await emit("refreshRequired");
+    emit("refreshRequired");
   } catch {
-    alert("Ошибка при удалении данных");
+    showError("при удалении");
   }
 };
 </script>
@@ -86,7 +87,7 @@ const deleteTask = async (): Promise<void> => {
         @update:checked="updateStatus"
       ></a-checkbox>
 
-      <a-form-item name="text">
+      <a-form-item name="text" class="input-item">
         <span
           v-if="!inEditing"
           class="task-name"
@@ -138,17 +139,20 @@ const deleteTask = async (): Promise<void> => {
 .task-container {
   display: flex;
   flex-direction: row;
+  justify-content: space-around;
   background-color: #fff;
   margin: 0.625rem 0;
   padding: 1.25rem 0.5rem;
-  border-radius: 10px;
+  border-radius: 0.625rem;
   width: 30rem;
 }
 .task-name {
   display: inline-block;
   margin: 0 0.875rem;
   font-size: 1rem;
-  width: 20rem;
+}
+.input-item {
+  flex-grow: 1;
 }
 .done {
   text-decoration: line-through;

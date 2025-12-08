@@ -19,17 +19,16 @@ const showDrawer = () => {
         title="Меню"
         placement="left"
       >
-        <RouterLink to="/profile"><p>Профиль</p></RouterLink>
-        <RouterLink to="/"><p>Список Задач</p></RouterLink>
+        <RouterLink to="/profile" class="nav-link">Профиль</RouterLink>
+        <RouterLink to="/" class="nav-link">Список Задач</RouterLink>
       </a-drawer>
     </nav>
-    <div class="divide-container">
-      <main class="main-container">
-        <slot />
-      </main>
-    </div>
+    <main class="main-container">
+      <slot />
+    </main>
   </div>
 </template>
+
 <style scoped>
 .default-layout-container {
   display: flex;
@@ -40,18 +39,15 @@ const showDrawer = () => {
 .navigation {
   padding: 30px 0;
 }
-.divide-container {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  width: 110rem;
-}
 .main-container {
   display: flex;
   flex-direction: column;
-  padding: 30px 50px 30px 40px;
-  max-width: 650px;
-  font-size: 30px;
-  width: 800px;
+  margin: auto;
+  max-width: 40rem;
+  font-size: 2rem;
+  width: 50rem;
+}
+.nav-link {
+  display: block;
 }
 </style>

@@ -5,6 +5,7 @@ import { refreshTodos } from "../api/api";
 import TabList from "../components/TabList.vue";
 import TaskList from "../components/TaskList.vue";
 import type { Todo, TodoInfo, Filter } from "../types/types";
+import { showError } from "../util/util";
 
 const tasks = ref<Todo[]>([]);
 let info = reactive<TodoInfo>({ all: 0, inWork: 0, completed: 0 });
@@ -21,7 +22,7 @@ const updateTasks = async (passedFilter?: Filter): Promise<void> => {
       info = response.info;
     }
   } catch {
-    alert("Ошибка при получении данных");
+    showError("при обновлении");
   }
 };
 
