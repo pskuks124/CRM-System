@@ -1,172 +1,160 @@
 <script setup lang="ts">
-import { ref } from "vue";
-import ButtonsSection from "./ButtonsSection.vue";
-import { formValidate } from "../util/store";
-import { putTodos, deleteTodos } from "../api/api";
-import type { Todo, filter } from "../types/types";
-import TheButton from "./UI/TheButton.vue";
-import EditSVGComp from "../assets/editSVGComp.vue";
-import DeleteSVGComp from "../assets/deleteSVGComp.vue";
+import { ref, reactive } from "vue";
+import { updateTodo, deleteTodo } from "../api/todo-api";
+import type { Todo, Filter } from "../types/types";
+import { FormOutlined } from "@ant-design/icons-vue";
+import { DeleteOutlined } from "@ant-design/icons-vue";
+import { CheckOutlined } from "@ant-design/icons-vue";
+import { CloseOutlined } from "@ant-design/icons-vue";
 
 const props = defineProps<{
   todo: Todo;
 }>();
 
 const emit = defineEmits<{
-  (e: "refreshRequired", passedFilter?: filter): Promise<void>;
+  (e: "refreshRequired", passedFilter?: Filter): Promise<void>;
 }>();
 
 const inEditing = ref(false);
-const todoTitle = ref(props.todo.title);
-const errorMessage = ref("");
+const form = reactive({ text: props.todo.title });
+const loading = ref(false);
 
 const cancelEdit = () => {
   toggleEdit();
-  todoTitle.value = props.todo.title;
+  form.text = props.todo.title;
 };
 const toggleEdit = () => {
   inEditing.value = !inEditing.value;
 };
 const updateStatus = async () => {
   try {
-    console.log(`update started`);
-
     const todo = { ...props.todo, isDone: !props.todo.isDone };
-    await putTodos(todo);
+    loading.value = true;
+    await updateTodo(todo);
     await emit("refreshRequired");
-  } catch (error) {
+  } catch {
+    alert("Ошибка при обновлении данных");
+  }
+  loading.value = false;
+};
+const applyEdit = async () => {
+  try {
+    const todo = { ...props.todo, title: form.text };
+    await updateTodo(todo);
+    await emit("refreshRequired");
+    toggleEdit();
+  } catch {
     alert("Ошибка при обновлении данных");
   }
 };
-const applyEdit = async (todo: Todo) => {
-  errorMessage.value = formValidate(todoTitle.value);
-  if (!errorMessage.value) {
-    try {
-      todo.title = todoTitle.value;
-      await putTodos(todo);
-      await emit("refreshRequired");
-      toggleEdit();
-    } catch (error) {
-      alert("Ошибка при обновлении данных");
-    }
-  }
-};
 
-const deleteTask = async (id: number): Promise<void> => {
+const deleteTask = async (): Promise<void> => {
   try {
-    await deleteTodos(id);
+    await deleteTodo(props.todo.id);
     await emit("refreshRequired");
-  } catch (error) {
+  } catch {
     alert("Ошибка при удалении данных");
   }
 };
 </script>
 
 <template>
-  <div class="task-container">
-    <label class="status-mark">
-      <input @change="updateStatus" class="checkmark-input" type="checkbox" />
-      <span class="checkmark" :class="{ checked: props.todo.isDone }">✓</span>
-    </label>
-    <div class="form-container">
-      <form @submit.prevent="applyEdit(todo)" :id="`editForm${todo.id}`">
-        <input
-          :disabled="!inEditing"
-          ref="input"
-          v-model.trim="todoTitle"
-          type="text"
-          class="edit-input"
-          :class="{ done: props.todo.isDone }"
-        />
-      </form>
-      <p class="error">{{ errorMessage }}</p>
-    </div>
+  <a-form
+    @finish="applyEdit"
+    :id="`editForm${todo.id}`"
+    layout="inline"
+    :model="form"
+    :rules="{
+      text: [
+        {
+          required: true,
+          min: 2,
+          message: 'Текст задачи должен состоять хотя-бы из 2 символов',
+          trigger: 'change',
+        },
+        {
+          max: 64,
+          message: 'Текст задачи не должен превышать 64 символа',
+          trigger: 'change',
+        },
+      ],
+    }"
+  >
+    <div class="task-container">
+      <a-checkbox
+        :checked="todo.isDone"
+        @update:checked="updateStatus"
+      ></a-checkbox>
 
-    <ButtonsSection v-if="!inEditing">
-      <TheButton @click="toggleEdit()" variant="primary">
-        <EditSVGComp />
-      </TheButton>
-      <TheButton @click="deleteTask(todo.id)" variant="danger">
-        <DeleteSVGComp />
-      </TheButton>
-    </ButtonsSection>
-    <ButtonsSection v-else>
-      <TheButton variant="primary" :form="`editForm${todo.id}`">✓</TheButton>
-      <TheButton @click="cancelEdit()" variant="secondary">X</TheButton>
-    </ButtonsSection>
-  </div>
+      <a-form-item name="text">
+        <span
+          v-if="!inEditing"
+          class="task-name"
+          :class="{ done: todo.isDone }"
+          >{{ form.text }}</span
+        >
+        <a-input
+          v-else
+          v-model:value.trim="form.text"
+          size="large"
+          class="task-input"
+          :disabled="loading"
+        />
+      </a-form-item>
+      <div v-if="!inEditing">
+        <a-button type="primary" size="large" @click="toggleEdit">
+          <template #icon>
+            <FormOutlined />
+          </template>
+        </a-button>
+        <a-button type="primary" danger size="large" @click="deleteTask">
+          <template #icon>
+            <DeleteOutlined />
+          </template>
+        </a-button>
+      </div>
+      <div v-else>
+        <a-button
+          type="primary"
+          size="large"
+          htmlType="submit"
+          :form="`editForm${todo.id}`"
+        >
+          <template #icon>
+            <CheckOutlined />
+          </template>
+        </a-button>
+        <a-button @click="cancelEdit()" size="large">
+          <template #icon>
+            <CloseOutlined />
+          </template>
+        </a-button>
+      </div>
+    </div>
+  </a-form>
 </template>
 
 <style scoped>
 .task-container {
   display: flex;
   flex-direction: row;
-  justify-content: space-between;
   background-color: #fff;
-  margin: 10px 0;
-  padding: 20px 10px;
+  margin: 0.625rem 0;
+  padding: 1.25rem 0.5rem;
   border-radius: 10px;
+  width: 30rem;
 }
-.status-mark,
-.checkmark {
-  display: flex;
-  flex-direction: row;
-  justify-content: center;
-  align-items: center;
-  border-radius: 50%;
+.task-name {
+  display: inline-block;
+  margin: 0 0.875rem;
+  font-size: 1rem;
+  width: 20rem;
 }
-.status-mark {
-  margin: 10px 0 10px 5px;
-  height: 25px;
-  width: 26px;
-  color: #fff;
-  border: 1px solid gray;
-}
-.status-mark:hover {
-  cursor: pointer;
-}
-.checkmark {
-  font-size: 0.875rem;
-  height: 25px;
-  width: 26px;
-  user-select: none;
-}
-.checkmark-input {
-  width: 0px;
-  height: 0px;
-}
-.checked {
-  background-color: #5393ff;
-}
-.form-container {
-  display: flex;
-  flex-direction: column;
-}
-.error {
-  font-size: 0.875rem;
-  height: 14px;
-  color: red;
-  margin-left: 2.5rem;
-}
-.task-name,
-.edit-input {
-  display: flex;
-  flex-direction: row;
-  margin: 10px 0 10px 40px;
-  width: 25rem;
-  font-family: "Times New Roman", Times, serif;
-  font-size: 1.4rem;
-  max-width: 300px;
-  overflow-x: auto;
-  word-wrap: break-word;
-  white-space: pre-line;
-  text-overflow: ellipsis;
-}
-.edit-input {
-  border: none;
+.task-input {
+  width: 20rem;
+  margin-right: 1.75rem;
 }
 .done {
   text-decoration: line-through;
-  color: grey;
 }
 </style>

@@ -1,13 +1,13 @@
 <script setup lang="ts">
 import TheTask from "./TheTask.vue";
-import type { Todo, filter } from "../types/types";
+import type { Todo, Filter } from "../types/types";
 
 defineProps<{
   tasks: Todo[];
 }>();
 
 const emit = defineEmits<{
-  (e: "refreshRequired", passedFilter?: filter): Promise<void>;
+  (e: "refreshRequired", passedFilter?: Filter): Promise<void>;
 }>();
 </script>
 

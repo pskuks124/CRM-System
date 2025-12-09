@@ -1,9 +1,21 @@
-<script setup lang="ts">
-import ToDoListPage from "./pages/ToDoListPage.vue";
-</script>
+<script setup lang="ts"></script>
 
 <template>
-  <ToDoListPage />
+  <div class="app-container">
+    <component :is="$route.meta.layout || 'div'">
+      <RouterView />
+    </component>
+  </div>
 </template>
 
-<style scoped></style>
+<style scoped>
+.app-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  background-color: #f1f4fb;
+  color: #000;
+  height: 100vh;
+  width: 100vw;
+}
+</style>
