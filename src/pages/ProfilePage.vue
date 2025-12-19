@@ -14,7 +14,6 @@ const displayedProfile = computed(() => ({
 
 onBeforeMount(async () => {
   profile.value = await authApi.getProfile();
-  console.log("profile is", profile);
 });
 </script>
 

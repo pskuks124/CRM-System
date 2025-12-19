@@ -1,13 +1,21 @@
 <script lang="ts" setup>
-import { ref } from "vue";
-import { useAuthStore } from "@/stores/api/auth-store";
+import { onBeforeMount, ref } from "vue";
+import { useAuthStore } from "@/stores/auth/auth-store";
 import { MenuOutlined } from "@ant-design/icons-vue";
-const { logout } = useAuthStore();
+import { tokenManager } from "@/api/token-manager";
+
+const { logout, refresh } = useAuthStore();
 const open = ref<boolean>(false);
 
 const showDrawer = () => {
   open.value = true;
 };
+let refreshValidated = ref<boolean>(false);
+onBeforeMount(async () => {
+  if (tokenManager.refreshToken) {
+    await refresh().then(() => (refreshValidated.value = true));
+  }
+});
 </script>
 
 <template>
@@ -28,7 +36,7 @@ const showDrawer = () => {
     </nav>
 
     <main class="main-container">
-      <slot />
+      <RouterView v-if="refreshValidated" />
     </main>
   </div>
 </template>
@@ -48,10 +56,12 @@ const showDrawer = () => {
 .main-container {
   display: flex;
   flex-direction: column;
-  padding: 30px 50px 30px 40px;
   margin: auto;
-  max-width: 80rem;
-  font-size: 30px;
-  width: 60rem;
+  max-width: 30rem;
+  font-size: 2rem;
+  width: 30rem;
+}
+.nav-link {
+  display: block;
 }
 </style>

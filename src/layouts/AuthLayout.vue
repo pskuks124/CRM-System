@@ -3,7 +3,7 @@
 <template>
   <div class="login-layout-container">
     <main class="main-container">
-      <slot />
+      <RouterView />
     </main>
   </div>
 </template>

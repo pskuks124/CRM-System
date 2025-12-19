@@ -1,4 +1,8 @@
-import { createWebHistory, createRouter } from "vue-router";
+import {
+  createWebHistory,
+  createRouter,
+  type NavigationGuard,
+} from "vue-router";
 
 import ToDoListPage from "../pages/ToDoListPage.vue";
 import ProfilePage from "../pages/ProfilePage.vue";
@@ -6,32 +10,61 @@ import DefaultLayout from "../layouts/DefaultLayout.vue";
 import RegisterPage from "../pages/RegisterPage.vue";
 import AuthLayout from "../layouts/AuthLayout.vue";
 import AuthPage from "@/pages/AuthPage.vue";
-import { useAuthStore } from "@/stores/api/auth-store";
+import { useAuthStore } from "@/stores/auth/auth-store";
+
+const authGuard: NavigationGuard = async (_to, _from, next) => {
+  const { isAuthorized } = useAuthStore();
+  if (!isAuthorized) {
+    next({ name: "login" });
+  } else {
+    next();
+  }
+};
+const guestGuard: NavigationGuard = async (_to, _from, next) => {
+  const { isAuthorized } = useAuthStore();
+  if (isAuthorized) {
+    next({ name: "todo" });
+  } else {
+    next();
+  }
+};
 
 const routes = [
   {
-    name: "home",
     path: "/",
-    component: ToDoListPage,
-    meta: { layout: DefaultLayout },
+    component: DefaultLayout,
+    beforeEnter: authGuard,
+    children: [
+      {
+        name: "profile",
+        path: "/profile",
+        component: ProfilePage,
+      },
+      {
+        name: "todo",
+        path: "/",
+
+        component: ToDoListPage,
+      },
+    ],
   },
   {
-    name: "profile",
-    path: "/profile",
-    component: ProfilePage,
-    meta: { layout: DefaultLayout },
-  },
-  {
-    name: "register",
-    path: "/register",
-    component: RegisterPage,
-    meta: { layout: AuthLayout },
-  },
-  {
-    name: "login",
-    path: "/login",
-    component: AuthPage,
-    meta: { layout: AuthLayout },
+    path: "/",
+    component: AuthLayout,
+    beforeEnter: guestGuard,
+    children: [
+      {
+        name: "register",
+        path: "/register",
+        component: RegisterPage,
+      },
+      {
+        name: "login",
+        path: "/login",
+
+        component: AuthPage,
+      },
+    ],
   },
 ];
 
@@ -40,10 +73,4 @@ const router = createRouter({
   routes,
 });
 
-router.beforeEach(async (to) => {
-  const { accessToken } = useAuthStore();
-  if (!accessToken && to.name !== "login" && to.name !== "register") {
-    return { name: "login" };
-  }
-});
 export { router };

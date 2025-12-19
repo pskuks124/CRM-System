@@ -1,17 +1,13 @@
 import axios from "axios";
-import { useAuthStore } from "@/stores/api/auth-store";
+import { useAuthStore } from "@/stores/auth/auth-store";
+import { tokenManager } from "./token-manager";
 
 const api = axios.create({ baseURL: "https://easydev.club/api/v1" });
 
-let refreshing = false;
-
 api.interceptors.request.use(
-  function (config) {
-    const { accessToken } = useAuthStore();
-    if (accessToken) {
-      console.log("sent token is", accessToken);
-
-      config.headers.Authorization = `Bearer ${accessToken}`;
+  async function (config) {
+    if (tokenManager.getAccessToken()) {
+      config.headers.Authorization = `Bearer ${tokenManager.getAccessToken()}`;
     }
     return config;
   },
@@ -24,26 +20,26 @@ api.interceptors.response.use(
     return response;
   },
   async function (error) {
+    let refreshing: boolean = false;
+    const setRefreshing = (value: boolean) => {
+      refreshing = value;
+    };
+    const { refresh } = useAuthStore();
     const originalRequest = error.config;
     if (error.status === 401 && !refreshing) {
-      console.log("before store refresh");
-      const { refresh, logout } = useAuthStore();
-      refreshing = true;
-      const result = await refresh()
-        .catch(async (error) => {
-          console.log("before refresh 401 check", error.status);
-          if (error.status === 401) {
-            console.log("before store logout", error);
-            await logout().catch((error) => {
-              alert(error);
-            });
+      setRefreshing(true);
+      await refresh()
+        .then((result) => {
+          if (result) {
+            originalRequest.headers.Authorization = `Bearer ${result.accessToken}`;
+            return api(originalRequest);
           }
         })
-        .finally(() => (refreshing = false));
-      if (result) {
-        originalRequest.headers.Authorization = `Bearer ${result.accessToken}`;
-        return api(originalRequest);
-      }
+        .finally(() => {
+          setTimeout(() => {
+            setRefreshing(false);
+          }, 5000);
+        });
     }
     throw error;
   },

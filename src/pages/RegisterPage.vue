@@ -3,6 +3,7 @@ import type { UserRegistration } from "@/types/auth-types";
 import authApi from "@/api/auth-api";
 import { ref, reactive } from "vue";
 import axios from "axios";
+import { showError } from "@/util/util";
 
 interface Form extends UserRegistration {
   repeatPassword: string;
@@ -67,8 +68,6 @@ const rules = {
 };
 
 async function registerUser(): Promise<void> {
-  console.log("register started");
-
   loading.value = true;
   try {
     await authApi.sendRegistrationData(form);
@@ -79,13 +78,12 @@ async function registerUser(): Promise<void> {
       error.response &&
       error.response.status === 409
     ) {
-      alert(
+      showError(
         "Пользователь с данным логином уже зарегистрирован. Попробуйте придумать другой",
       );
-    } else alert("Не удалось зарегистрироваться");
+    } else showError("Ошибка при регистрации");
   }
   loading.value = false;
-  console.log("register finished");
 }
 
 async function passwordMatchValidate(): Promise<boolean> {

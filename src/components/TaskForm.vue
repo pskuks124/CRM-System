@@ -1,7 +1,8 @@
 <script setup lang="ts">
 import { ref, reactive } from "vue";
 import { createTodo } from "../api/todo-api";
-import type { Filter } from "../types/types";
+import type { Filter } from "../types/todo-types";
+import { showError } from "../util/util";
 
 const emit = defineEmits<{
   (e: "refreshRequired", passedFilter?: Filter): Promise<void>;
@@ -17,7 +18,7 @@ async function addTask() {
     await emit("refreshRequired");
     form.text = "";
   } catch {
-    alert("Ошибка при отправке данных");
+    showError("Ошибка при отправке данных");
   }
   loading.value = false;
 }
@@ -68,6 +69,6 @@ async function addTask() {
   display: flex;
   flex-direction: column;
   width: 100%;
-  margin-bottom: 40px;
+  margin-bottom: 2.5rem;
 }
 </style>

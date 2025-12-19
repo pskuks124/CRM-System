@@ -1,18 +1,25 @@
 <script setup lang="ts">
-import { ref, reactive } from "vue";
+import { ref, reactive, watch } from "vue";
 import { updateTodo, deleteTodo } from "../api/todo-api";
-import type { Todo, Filter } from "../types/types";
+import type { Todo, Filter } from "../types/todo-types";
 import { FormOutlined } from "@ant-design/icons-vue";
 import { DeleteOutlined } from "@ant-design/icons-vue";
 import { CheckOutlined } from "@ant-design/icons-vue";
 import { CloseOutlined } from "@ant-design/icons-vue";
+import { showError } from "../util/util";
 
 const props = defineProps<{
   todo: Todo;
 }>();
 
+watch(
+  () => props.todo.title,
+  (newTitle: string) => {
+    form.text = newTitle;
+  },
+);
 const emit = defineEmits<{
-  (e: "refreshRequired", passedFilter?: Filter): Promise<void>;
+  (e: "refreshRequired", passedFilter?: Filter): void;
 }>();
 
 const inEditing = ref(false);
@@ -31,9 +38,9 @@ const updateStatus = async () => {
     const todo = { ...props.todo, isDone: !props.todo.isDone };
     loading.value = true;
     await updateTodo(todo);
-    await emit("refreshRequired");
+    emit("refreshRequired");
   } catch {
-    alert("Ошибка при обновлении данных");
+    showError("Ошибка при изменении данных");
   }
   loading.value = false;
 };
@@ -41,19 +48,19 @@ const applyEdit = async () => {
   try {
     const todo = { ...props.todo, title: form.text };
     await updateTodo(todo);
-    await emit("refreshRequired");
+    emit("refreshRequired");
     toggleEdit();
   } catch {
-    alert("Ошибка при обновлении данных");
+    showError("Ошибка при изменении данных");
   }
 };
 
 const deleteTask = async (): Promise<void> => {
   try {
     await deleteTodo(props.todo.id);
-    await emit("refreshRequired");
+    emit("refreshRequired");
   } catch {
-    alert("Ошибка при удалении данных");
+    showError("Ошибка при удалении данных");
   }
 };
 </script>
@@ -61,6 +68,7 @@ const deleteTask = async (): Promise<void> => {
 <template>
   <a-form
     @finish="applyEdit"
+    class="input-item"
     :id="`editForm${todo.id}`"
     layout="inline"
     :model="form"
@@ -141,7 +149,7 @@ const deleteTask = async (): Promise<void> => {
   background-color: #fff;
   margin: 0.625rem 0;
   padding: 1.25rem 0.5rem;
-  border-radius: 10px;
+  border-radius: 0.625rem;
   width: 30rem;
 }
 .task-name {
