@@ -3,6 +3,7 @@ import { useAuthStore } from "@/stores/auth/auth-store";
 import { tokenManager } from "./token-manager";
 
 const api = axios.create({ baseURL: "https://easydev.club/api/v1" });
+let refreshing: boolean = false;
 
 api.interceptors.request.use(
   async function (config) {
@@ -20,7 +21,6 @@ api.interceptors.response.use(
     return response;
   },
   async function (error) {
-    let refreshing: boolean = false;
     const setRefreshing = (value: boolean) => {
       refreshing = value;
     };
