@@ -52,11 +52,10 @@ export const useAuthStore = defineStore("auth", () => {
   };
 
   const logout = () => {
-    authApi.logout().then(() => {
-      setAuth(false);
-      tokenManager.setToken({ accessToken: null, refreshToken: null });
-      router.push({ path: "/login" });
-    });
+    if (tokenManager.refreshToken) authApi.logout();
+    setAuth(false);
+    tokenManager.setToken({ accessToken: null, refreshToken: null });
+    router.push({ path: "/login" });
   };
 
   return {
