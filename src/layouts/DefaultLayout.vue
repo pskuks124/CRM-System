@@ -29,8 +29,8 @@ onBeforeMount(async () => {
         title="Меню"
         placement="left"
       >
-        <RouterLink to="/profile"><p>Профиль</p></RouterLink>
-        <RouterLink to="/"><p>Список Задач</p></RouterLink>
+        <RouterLink to="/profile" class="nav-link">Профиль</RouterLink>
+        <RouterLink to="/" class="nav-link">Список Задач</RouterLink>
         <a-button @click="logout" class="button" type="primary">Выйти</a-button>
       </a-drawer>
     </nav>
@@ -43,25 +43,26 @@ onBeforeMount(async () => {
 <style scoped>
 .default-layout-container {
   display: flex;
-  flex-direction: column;
+  flex-direction: row;
+  justify-content: space-between;
   width: 100%;
 }
 .navigation {
-  display: flex;
-  justify-content: space-between;
-  padding: 30px 0;
-  width: 100%;
+  padding: 2rem 0;
 }
-
 .main-container {
   display: flex;
   flex-direction: column;
   margin: auto;
-  max-width: 30rem;
+  max-width: 40rem;
   font-size: 2rem;
-  width: 30rem;
+  width: 50rem;
 }
 .nav-link {
   display: block;
+  padding: 0.5rem 0;
+}
+.button {
+  margin: 1rem 0;
 }
 </style>
