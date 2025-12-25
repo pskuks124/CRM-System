@@ -31,8 +31,8 @@ onBeforeMount(async () => {
       >
         <RouterLink to="/profile"><p>Профиль</p></RouterLink>
         <RouterLink to="/"><p>Список Задач</p></RouterLink>
+        <a-button @click="logout" class="button" type="primary">Выйти</a-button>
       </a-drawer>
-      <a-button @click="logout" class="button" type="primary">Выйти</a-button>
     </nav>
 
     <main class="main-container">
