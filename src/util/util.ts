@@ -1,14 +1,15 @@
 import { message } from "ant-design-vue";
 
 type ErrorOption =
-  | "при отправке"
-  | "при удалении"
-  | "при изменении"
-  | "при обновлении";
+  | "Ошибка при отправке данных"
+  | "Ошибка при удалении данных"
+  | "Ошибка при изменении данных"
+  | "Ошибка при обновлении данных"
+  | "Ошибка при авторизации"
+  | "Ошибка при регистрации"
+  | "Пользователь с данным логином уже зарегистрирован. Попробуйте придумать другой";
 const showError = (errorOption: ErrorOption): void => {
-  console.log("showError сработал");
-
-  message.error({ content: `Ошибка ${errorOption} данных` });
+  message.error({ content: errorOption });
 };
 
 export { showError };

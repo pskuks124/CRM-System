@@ -1,7 +1,7 @@
 <script setup lang="ts">
-import { ref, reactive } from "vue";
-import { updateTodo, deleteTodo } from "../api/api";
-import type { Todo, Filter } from "../types/types";
+import { ref, reactive, watch } from "vue";
+import { updateTodo, deleteTodo } from "../api/todo-api";
+import type { Todo, Filter } from "../types/todo-types";
 import { FormOutlined } from "@ant-design/icons-vue";
 import { DeleteOutlined } from "@ant-design/icons-vue";
 import { CheckOutlined } from "@ant-design/icons-vue";
@@ -12,6 +12,12 @@ const props = defineProps<{
   todo: Todo;
 }>();
 
+watch(
+  () => props.todo.title,
+  (newTitle: string) => {
+    form.text = newTitle;
+  },
+);
 const emit = defineEmits<{
   (e: "refreshRequired", passedFilter?: Filter): void;
 }>();
@@ -34,7 +40,7 @@ const updateStatus = async () => {
     await updateTodo(todo);
     emit("refreshRequired");
   } catch {
-    showError("при изменении");
+    showError("Ошибка при изменении данных");
   }
   loading.value = false;
 };
@@ -45,7 +51,7 @@ const applyEdit = async () => {
     emit("refreshRequired");
     toggleEdit();
   } catch {
-    showError("при изменении");
+    showError("Ошибка при изменении данных");
   }
 };
 
@@ -54,7 +60,7 @@ const deleteTask = async (): Promise<void> => {
     await deleteTodo(props.todo.id);
     emit("refreshRequired");
   } catch {
-    showError("при удалении");
+    showError("Ошибка при удалении данных");
   }
 };
 </script>
@@ -62,6 +68,7 @@ const deleteTask = async (): Promise<void> => {
 <template>
   <a-form
     @finish="applyEdit"
+    class="input-item"
     :id="`editForm${todo.id}`"
     layout="inline"
     :model="form"
@@ -87,7 +94,7 @@ const deleteTask = async (): Promise<void> => {
         @update:checked="updateStatus"
       ></a-checkbox>
 
-      <a-form-item name="text" class="input-item">
+      <a-form-item name="text">
         <span
           v-if="!inEditing"
           class="task-name"
@@ -98,7 +105,7 @@ const deleteTask = async (): Promise<void> => {
           v-else
           v-model:value.trim="form.text"
           size="large"
-          class="input"
+          class="task-input"
           :disabled="loading"
         />
       </a-form-item>
@@ -139,7 +146,6 @@ const deleteTask = async (): Promise<void> => {
 .task-container {
   display: flex;
   flex-direction: row;
-  justify-content: space-around;
   background-color: #fff;
   margin: 0.625rem 0;
   padding: 1.25rem 0.5rem;
@@ -150,9 +156,11 @@ const deleteTask = async (): Promise<void> => {
   display: inline-block;
   margin: 0 0.875rem;
   font-size: 1rem;
+  width: 20rem;
 }
-.input-item {
-  flex-grow: 1;
+.task-input {
+  width: 20rem;
+  margin-right: 1.75rem;
 }
 .done {
   text-decoration: line-through;

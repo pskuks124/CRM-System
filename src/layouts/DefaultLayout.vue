@@ -1,11 +1,21 @@
 <script lang="ts" setup>
-import { ref } from "vue";
+import { onBeforeMount, ref } from "vue";
+import { useAuthStore } from "@/stores/auth/auth-store";
 import { MenuOutlined } from "@ant-design/icons-vue";
+import { tokenManager } from "@/api/token-manager";
+
+const { logout, refresh } = useAuthStore();
 const open = ref<boolean>(false);
 
 const showDrawer = () => {
   open.value = true;
 };
+let refreshValidated = ref<boolean>(false);
+onBeforeMount(async () => {
+  if (tokenManager.refreshToken) {
+    await refresh().then(() => (refreshValidated.value = true));
+  }
+});
 </script>
 
 <template>
@@ -19,33 +29,37 @@ const showDrawer = () => {
         title="Меню"
         placement="left"
       >
-        <RouterLink to="/profile" class="nav-link">Профиль</RouterLink>
-        <RouterLink to="/" class="nav-link">Список Задач</RouterLink>
+        <RouterLink to="/profile"><p>Профиль</p></RouterLink>
+        <RouterLink to="/"><p>Список Задач</p></RouterLink>
+        <a-button @click="logout" class="button" type="primary">Выйти</a-button>
       </a-drawer>
     </nav>
+
     <main class="main-container">
-      <slot />
+      <RouterView v-if="refreshValidated" />
     </main>
   </div>
 </template>
-
 <style scoped>
 .default-layout-container {
   display: flex;
-  flex-direction: row;
-  justify-content: space-between;
+  flex-direction: column;
   width: 100%;
 }
 .navigation {
+  display: flex;
+  justify-content: space-between;
   padding: 30px 0;
+  width: 100%;
 }
+
 .main-container {
   display: flex;
   flex-direction: column;
   margin: auto;
-  max-width: 40rem;
+  max-width: 30rem;
   font-size: 2rem;
-  width: 50rem;
+  width: 30rem;
 }
 .nav-link {
   display: block;

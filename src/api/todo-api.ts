@@ -1,7 +1,6 @@
-import type { MetaResponse, Todo, TodoInfo, Filter } from "../types/types";
-import axios from "axios";
+import type { MetaResponse, Todo, TodoInfo, Filter } from "../types/todo-types";
+import { api } from "./api-client";
 
-const api = axios.create({ baseURL: "https://easydev.club/api/v1" });
 async function createTodo(title: string): Promise<void> {
   await api.post("/todos", { title, isDone: false });
 }
