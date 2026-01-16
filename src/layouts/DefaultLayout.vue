@@ -1,10 +1,10 @@
 <script lang="ts" setup>
 import { onBeforeMount, ref } from "vue";
-import { useAuthStore } from "@/stores/auth/auth-store";
+import { useSessionStore } from "@/stores/auth/session-store";
 import { MenuOutlined } from "@ant-design/icons-vue";
 import { tokenManager } from "@/api/token-manager";
 
-const { logout, refresh } = useAuthStore();
+const sessionStore = useSessionStore();
 const open = ref<boolean>(false);
 
 const showDrawer = () => {
@@ -13,7 +13,10 @@ const showDrawer = () => {
 let refreshValidated = ref<boolean>(false);
 onBeforeMount(async () => {
   if (tokenManager.refreshToken) {
-    await refresh().then(() => (refreshValidated.value = true));
+    await sessionStore.refresh().then(async () => {
+      refreshValidated.value = true;
+      await sessionStore.fetchProfile();
+    });
   }
 });
 </script>
@@ -29,12 +32,16 @@ onBeforeMount(async () => {
         title="Меню"
         placement="left"
       >
-        <RouterLink to="/profile"><p>Профиль</p></RouterLink>
-        <RouterLink to="/"><p>Список Задач</p></RouterLink>
-        <a-button @click="logout" class="button" type="primary">Выйти</a-button>
+        <RouterLink to="/profile" class="nav-link">Профиль</RouterLink>
+        <RouterLink to="/" class="nav-link">Список Задач</RouterLink>
+        <RouterLink
+          v-if="sessionStore.adminAccess || sessionStore.moderatorAccess"
+          to="/user-list"
+          class="nav-link"
+          >Пользователи</RouterLink
+        >
       </a-drawer>
     </nav>
-
     <main class="main-container">
       <RouterView v-if="refreshValidated" />
     </main>
@@ -43,25 +50,27 @@ onBeforeMount(async () => {
 <style scoped>
 .default-layout-container {
   display: flex;
-  flex-direction: column;
+  flex-direction: row;
+  justify-content: space-between;
   width: 100%;
+  height: 100%;
 }
 .navigation {
-  display: flex;
-  justify-content: space-between;
   padding: 30px 0;
-  width: 100%;
 }
-
 .main-container {
   display: flex;
   flex-direction: column;
   margin: auto;
-  max-width: 30rem;
+  min-width: 40rem;
   font-size: 2rem;
-  width: 30rem;
+  height: 100%;
 }
 .nav-link {
   display: block;
+  padding: 0.5rem 0;
+}
+.button {
+  margin: 2rem 0;
 }
 </style>

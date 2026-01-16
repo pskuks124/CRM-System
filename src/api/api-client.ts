@@ -1,5 +1,5 @@
 import axios from "axios";
-import { useAuthStore } from "@/stores/auth/auth-store";
+import { useSessionStore } from "@/stores/auth/session-store";
 import { tokenManager } from "./token-manager";
 
 const api = axios.create({ baseURL: "https://easydev.club/api/v1" });
@@ -24,7 +24,7 @@ api.interceptors.response.use(
     const setRefreshing = (value: boolean) => {
       refreshing = value;
     };
-    const { refresh } = useAuthStore();
+    const { refresh } = useSessionStore();
     const originalRequest = error.config;
     if (error.status === 401 && !refreshing) {
       setRefreshing(true);

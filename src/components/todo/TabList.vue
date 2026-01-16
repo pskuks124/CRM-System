@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import type { TodoTab, Filter, TodoInfo } from "../types/todo-types";
+import type { TodoTab, Filter, TodoInfo } from "../../types/todo-types";
 
 const tabs: TodoTab[] = [
   { name: "Все", key: "all" },

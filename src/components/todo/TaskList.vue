@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import TheTask from "./TheTask.vue";
-import type { Todo, Filter } from "../types/todo-types";
+import type { Todo, Filter } from "../../types/todo-types";
 
 defineProps<{
   tasks: Todo[];

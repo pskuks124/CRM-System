@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import type { AuthData } from "@/types/auth-types";
 import { ref, reactive } from "vue";
-import { useAuthStore } from "@/stores/auth/auth-store";
+import { useSessionStore } from "@/stores/auth/session-store";
 
 const form = reactive<AuthData>({
   login: "",
@@ -31,7 +31,7 @@ const rules = {
 
 async function authorizeUser(): Promise<void> {
   loading.value = true;
-  const { login } = useAuthStore();
+  const { login } = useSessionStore();
   await login(form);
   loading.value = false;
 }

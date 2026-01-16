@@ -1,8 +1,8 @@
 <script setup lang="ts">
 import { ref, reactive } from "vue";
-import { createTodo } from "../api/todo-api";
-import type { Filter } from "../types/todo-types";
-import { showError } from "../util/util";
+import { createTodo } from "../../api/todo-api";
+import type { Filter } from "../../types/todo-types";
+import { showError } from "../../util/util";
 
 const emit = defineEmits<{
   (e: "refreshRequired", passedFilter?: Filter): Promise<void>;
