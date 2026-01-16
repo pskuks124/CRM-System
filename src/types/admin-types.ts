@@ -1,0 +1,60 @@
+interface UserFilters {
+  search?: string;
+  sortBy?: string;
+  sortOrder?: "asc" | "desc";
+  isBlocked?: boolean;
+  limit?: number; // сколько на странице
+  page?: number; // страницу
+}
+
+// Интерфейс пользователя
+interface User {
+  id: number;
+  username: string;
+  email: string;
+  date: string; // ISO date string
+  isBlocked: boolean;
+  roles: Roles[];
+  phoneNumber: string;
+}
+// Интерфейс метаинформации
+
+interface MetaResponse<T> {
+  data: T[];
+  meta: {
+    totalAmount: number;
+    sortBy: string;
+    sortOrder: "asc" | "desc";
+  };
+}
+// Интерфейс для обновления прав пользователя
+interface UserRolesRequest {
+  roles: Roles[]; // при вызове этой апи роли будут обновлены к тому массиву который будет передан
+  // например если у вас была roles: ['ADMIN'] а вы хотите добавить ['MODERATOR'] то нужно передавать
+  // старые + новые - roles: ['ADMIN', 'MODERATOR']
+}
+
+// Интерфейс для обновления данных пользователя
+interface UserRequest {
+  username?: string;
+  email?: string;
+  phoneNumber?: string;
+}
+
+type Roles = "ADMIN" | "MODERATOR" | "USER";
+
+interface ModalState {
+  open: boolean;
+  record: User;
+  type?: "roles" | "block" | "delete" | "filter";
+}
+
+export type {
+  UserFilters,
+  User,
+  MetaResponse,
+  UserRolesRequest,
+  Roles,
+  UserRequest,
+  ModalState,
+};
