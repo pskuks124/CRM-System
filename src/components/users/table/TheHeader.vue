@@ -7,7 +7,6 @@ const emit = defineEmits<{
   (e: "openFilterModalRequired"): void;
 }>();
 const handleLoadEmit = () => {
-  console.log(search.value);
   emit("loadTableRequired");
 };
 </script>

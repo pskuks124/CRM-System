@@ -5,8 +5,6 @@ const emit = defineEmits<{
   (e: "loadTableRequired"): void;
 }>();
 const handleEmit = () => {
-  console.log(search.value);
-
   emit("loadTableRequired");
 };
 </script>
