@@ -6,6 +6,10 @@ const emit = defineEmits<{
   (e: "loadTableRequired"): void;
   (e: "openFilterModalRequired"): void;
 }>();
+const handleLoadEmit = () => {
+  console.log(search.value);
+  emit("loadTableRequired");
+};
 </script>
 <template>
   <a-row justify="space-between">
@@ -13,10 +17,7 @@ const emit = defineEmits<{
       <h3>Пользователи</h3>
     </a-col>
     <a-col :span="8"></a-col>
-    <SearchInput
-      :search="search"
-      @loadTableRequired="emit('loadTableRequired')"
-    />
+    <SearchInput v-model="search" @loadTableRequired="handleLoadEmit" />
     <FilterButton @openFilterModalRequired="emit('openFilterModalRequired')" />
   </a-row>
 </template>
