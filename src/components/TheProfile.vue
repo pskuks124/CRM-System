@@ -1,9 +1,9 @@
 <script setup lang="ts">
 import adminApi from "@/api/admin-api";
 import { useSessionStore } from "@/stores/auth/session-store";
-import type { User } from "@/types/admin-types";
+import type { UserRequest, User } from "@/types/admin-types";
 import type { Profile } from "@/types/auth-types";
-import { ref } from "vue";
+import { reactive, ref, watch } from "vue";
 import { useRouter } from "vue-router";
 
 const { logout } = useSessionStore();
@@ -12,20 +12,17 @@ const props = defineProps<{
   profile: User | Profile;
   showButtons?: boolean;
 }>();
-// нет еррормесседжа при неуспешном редактировании
-// надо сменить на модель в тудухах и еще где-то
+
 const emit = defineEmits<{
-  (e?: "update-username", value?: string): void;
-  (e?: "update-email", value?: string): void;
-  (e?: "update-phoneNumber", value?: string): void;
   (e: "refreshRequired"): void;
 }>();
 
-// const profile = defineModel<User | Profile>("profile", {
-//   default: { username: "", email: "", phoneNumber: "" },
-// });
-// const showButtons = defineModel<boolean>("showButtons", { default: false });
-// const emit = defineEmits<{ (e: "refreshRequired"): void }>();
+const profileForm = reactive<UserRequest>({
+  username: "",
+  email: "",
+  phoneNumber: "",
+});
+
 const router = useRouter();
 
 const inEditing = ref(false);
@@ -62,19 +59,32 @@ const setInEditing = (value: boolean) => (inEditing.value = value);
 const setLoading = (value: boolean) => (loading.value = value);
 const applyEdit = async () => {
   setLoading(true);
-  if (props.profile)
-    await adminApi.editProfile(props.profile.id, props.profile).finally(() => {
-      setLoading(false);
-      setInEditing(false);
-      emit("refreshRequired");
-    });
+  const requestBody: UserRequest = {};
+  for (const key in profileForm) {
+    const field = key as keyof UserRequest;
+    if (profileForm[field] !== props.profile[field])
+      requestBody[field] = profileForm[field];
+  }
+  await adminApi.editProfile(props.profile.id, requestBody).finally(() => {
+    setLoading(false);
+    setInEditing(false);
+    emit("refreshRequired");
+  });
 };
+const resetForm = () => {
+  if (props.profile) {
+    const { username, email, phoneNumber } = props.profile;
+    Object.assign(profileForm, { username, email, phoneNumber });
+  }
+};
+
+watch(() => props.profile, resetForm, { immediate: true });
 </script>
 <template>
   <h5 class="heading">Профиль</h5>
   <section class="profile-container">
     <a-form
-      :model="profile"
+      :model="profileForm"
       name="profile-edit-form"
       :rules="rules"
       :hideRequiredMark="true"
@@ -86,8 +96,7 @@ const applyEdit = async () => {
       <a-form-item label="Имя пользователя" name="username">
         <a-input
           v-if="inEditing"
-          :value="profile.username"
-          @input="emit('update-username', $event.target.value)"
+          v-model:value="profileForm.username"
           class="input"
         />
         <span v-else class="profile-value">{{ profile.username }}</span>
@@ -95,8 +104,7 @@ const applyEdit = async () => {
       <a-form-item label="Почтовый адрес" name="email">
         <a-input
           v-if="inEditing"
-          :value="profile.email"
-          @input="emit('update-email', $event.target.value)"
+          v-model:value="profileForm.email"
           class="input"
         />
         <span v-else class="profile-value">{{ profile.email }}</span>
@@ -104,8 +112,7 @@ const applyEdit = async () => {
       <a-form-item label="Номер телефона" name="phoneNumber">
         <a-input
           v-if="inEditing"
-          :value="profile.phoneNumber"
-          @input="emit('update-phoneNumber', $event.target.value)"
+          v-model:value="profileForm.phoneNumber"
           class="input"
         />
         <span v-else class="profile-value">{{ profile.phoneNumber }}</span>

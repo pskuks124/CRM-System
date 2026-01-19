@@ -29,9 +29,6 @@ onBeforeMount(async () => {
 <template>
   <TheProfile
     :profile="profile"
-    @update-username="(value: string) => (profile.username = value)"
-    @update-email="(value: string) => (profile.email = value)"
-    @update-phoneNumber="(value: string) => (profile.phoneNumber = value)"
     :showButtons="true"
     @refreshRequired="refreshProfile"
   />
