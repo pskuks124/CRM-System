@@ -48,7 +48,7 @@ const rules = {
   phoneNumber: [
     {
       required: false,
-      pattern: new RegExp(/^\+\d{11}|^\d{11}$/),
+      pattern: new RegExp(/^\+\d{11}$|^\d{11}$/),
       message: "номер телефона должен быть корректным",
       trigger: ["change", "blur"],
     },
