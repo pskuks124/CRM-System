@@ -7,6 +7,7 @@ import { DeleteOutlined } from "@ant-design/icons-vue";
 import { CheckOutlined } from "@ant-design/icons-vue";
 import { CloseOutlined } from "@ant-design/icons-vue";
 import { showError } from "../util/util";
+import { MAX_TASK_LENGTH, MIN_TASK_LENGTH } from "@/util/constants";
 
 const props = defineProps<{
   todo: Todo;
@@ -76,12 +77,12 @@ const deleteTask = async (): Promise<void> => {
       text: [
         {
           required: true,
-          min: 2,
+          min: MIN_TASK_LENGTH,
           message: 'Текст задачи должен состоять хотя-бы из 2 символов',
           trigger: 'change',
         },
         {
-          max: 64,
+          max: MAX_TASK_LENGTH,
           message: 'Текст задачи не должен превышать 64 символа',
           trigger: 'change',
         },

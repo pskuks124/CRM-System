@@ -30,7 +30,7 @@ export const useAuthStore = defineStore("auth", () => {
   const setAuth = (value: boolean) => {
     isAuthorized.value = value;
   };
-  const refresh = async (): Promise<Token> => {
+  const validateToken = async (): Promise<Token> => {
     const refreshToken = tokenManager.refreshToken;
     if (!refreshToken) {
       logout();
@@ -54,13 +54,13 @@ export const useAuthStore = defineStore("auth", () => {
   const logout = () => {
     if (tokenManager.refreshToken) authApi.logout();
     setAuth(false);
-    tokenManager.setToken({ accessToken: null, refreshToken: null });
+    tokenManager.clearToken();
     router.push({ path: "/login" });
   };
 
   return {
     isAuthorized,
-    refresh,
+    validateToken,
     login,
     logout,
   };

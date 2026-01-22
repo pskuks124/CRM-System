@@ -3,6 +3,7 @@ import { ref, reactive } from "vue";
 import { createTodo } from "../api/todo-api";
 import type { Filter } from "../types/todo-types";
 import { showError } from "../util/util";
+import { MAX_TASK_LENGTH, MIN_TASK_LENGTH } from "@/util/constants";
 
 const emit = defineEmits<{
   (e: "refreshRequired", passedFilter?: Filter): Promise<void>;
@@ -34,12 +35,12 @@ async function addTask() {
         text: [
           {
             required: true,
-            min: 2,
+            min: MIN_TASK_LENGTH,
             message: 'Текст задачи должен состоять хотя-бы из 2 символов',
             trigger: 'change',
           },
           {
-            max: 64,
+            max: MAX_TASK_LENGTH,
             message: 'Текст задачи не должен превышать 64 символа',
             trigger: 'change',
           },

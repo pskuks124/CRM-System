@@ -4,6 +4,7 @@ import authApi from "@/api/auth-api";
 import { ref, reactive } from "vue";
 import axios from "axios";
 import { showError } from "@/util/util";
+import { MAX_LOGIN_LENGTH, MAX_PASSWORD_LENGTH, MIN_LOGIN_LENGTH, MIN_PASSWORD_LENGTH } from "@/util/constants";
 
 interface Form extends UserRegistration {
   repeatPassword: string;
@@ -31,16 +32,16 @@ const rules = {
   login: [
     {
       required: true,
-      min: 2,
-      max: 60,
+      min: MIN_LOGIN_LENGTH,
+      max: MAX_LOGIN_LENGTH,
       message: "от 2 до 60 символов латинского алфавита",
     },
   ],
   password: [
     {
       required: true,
-      min: 6,
-      max: 60,
+      min: MIN_PASSWORD_LENGTH,
+      max: MAX_PASSWORD_LENGTH,
       message: "от 6 до 60 символов",
     },
   ],

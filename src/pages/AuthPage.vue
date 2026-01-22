@@ -2,6 +2,7 @@
 import type { AuthData } from "@/types/auth-types";
 import { ref, reactive } from "vue";
 import { useAuthStore } from "@/stores/auth/auth-store";
+import { MAX_LOGIN_LENGTH, MAX_PASSWORD_LENGTH, MIN_LOGIN_LENGTH, MIN_PASSWORD_LENGTH } from "@/util/constants";
 
 const form = reactive<AuthData>({
   login: "",
@@ -14,16 +15,16 @@ const rules = {
   login: [
     {
       required: true,
-      min: 2,
-      max: 60,
+      min: MIN_LOGIN_LENGTH,
+      max: MAX_LOGIN_LENGTH,
       message: "от 2 до 60 символов латинского алфавита",
     },
   ],
   password: [
     {
       required: true,
-      min: 6,
-      max: 60,
+      min: MIN_PASSWORD_LENGTH,
+      max: MAX_PASSWORD_LENGTH,
       message: "от 6 до 60 символов",
     },
   ],

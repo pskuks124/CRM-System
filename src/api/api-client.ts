@@ -28,7 +28,7 @@ api.interceptors.response.use(
     const originalRequest = error.config;
     if (error.status === 401 && !refreshing) {
       setRefreshing(true);
-      await refresh()
+      await validateToken()
         .then((result) => {
           if (result) {
             originalRequest.headers.Authorization = `Bearer ${result.accessToken}`;

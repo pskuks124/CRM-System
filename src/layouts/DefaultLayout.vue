@@ -4,7 +4,7 @@ import { useAuthStore } from "@/stores/auth/auth-store";
 import { MenuOutlined } from "@ant-design/icons-vue";
 import { tokenManager } from "@/api/token-manager";
 
-const { logout, refresh } = useAuthStore();
+const { logout, validateToken } = useAuthStore();
 const open = ref<boolean>(false);
 
 const showDrawer = () => {
@@ -13,7 +13,7 @@ const showDrawer = () => {
 let refreshValidated = ref<boolean>(false);
 onBeforeMount(async () => {
   if (tokenManager.refreshToken) {
-    await refresh().then(() => (refreshValidated.value = true));
+    await validateToken().then(() => (refreshValidated.value = true));
   }
 });
 </script>

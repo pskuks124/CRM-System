@@ -10,7 +10,7 @@ class TokenManager {
     this.refreshToken = token.refreshToken;
     if (token.refreshToken) {
       localStorage.setItem("refreshToken", token.refreshToken);
-    } else localStorage.removeItem("refreshToken");
+    }
   }
   getAccessToken() {
     return this.#accessToken;
@@ -20,7 +20,12 @@ class TokenManager {
     this.refreshToken = token.refreshToken;
     if (token.refreshToken) {
       localStorage.setItem("refreshToken", token.refreshToken);
-    } else localStorage.removeItem("refreshToken");
+    }
+  }
+  clearToken() {
+    this.#accessToken = null;
+    this.refreshToken = null;
+    localStorage.removeItem("refreshToken");
   }
 }
 export const tokenManager = new TokenManager({
