@@ -2,9 +2,7 @@
 
 <template>
   <div class="app-container">
-    <component :is="$route.meta.layout || 'div'">
-      <RouterView />
-    </component>
+    <RouterView />
   </div>
 </template>
 
