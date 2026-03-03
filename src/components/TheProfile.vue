@@ -5,6 +5,7 @@ import type { UserRequest, User } from "@/types/admin-types";
 import type { Profile } from "@/types/auth-types";
 import { reactive, ref, watch } from "vue";
 import { useRouter } from "vue-router";
+import { VALIDATION_RULES } from "@/util/constants";
 
 const { logout } = useSessionStore();
 
@@ -29,42 +30,25 @@ const inEditing = ref(false);
 const loading = ref(false);
 
 const rules = {
-  username: [
-    {
-      required: true,
-      max: 60,
-      message: "от 1 до 60 символов русского/латинского алфавита",
-      trigger: ["change", "blur"],
-    },
-  ],
-  email: [
-    {
-      required: true,
-      type: "email",
-      message: "адрес почты должен быть корректным",
-      trigger: ["change", "blur"],
-    },
-  ],
-  phoneNumber: [
-    {
-      required: false,
-      pattern: new RegExp(/^\+\d{11}$|^\d{11}$/),
-      message: "номер телефона должен быть корректным",
-      trigger: ["change", "blur"],
-    },
-  ],
+  username: VALIDATION_RULES.username,
+  email: VALIDATION_RULES.email,
+  phoneNumber: VALIDATION_RULES.phoneNumber,
+};
+
+const getEditedFields = (original: UserRequest, values: UserRequest) => {
+  const editedFields: UserRequest = {};
+  for (const key in values) {
+    const field = key as keyof UserRequest;
+    if (values[field] !== original[field]) editedFields[field] = values[field];
+  }
+  return editedFields;
 };
 
 const setInEditing = (value: boolean) => (inEditing.value = value);
 const setLoading = (value: boolean) => (loading.value = value);
-const applyEdit = async () => {
+const handleEdit = async () => {
   setLoading(true);
-  const requestBody: UserRequest = {};
-  for (const key in profileForm) {
-    const field = key as keyof UserRequest;
-    if (profileForm[field] !== props.profile[field])
-      requestBody[field] = profileForm[field];
-  }
+  const requestBody = getEditedFields(props.profile, profileForm);
   await adminApi.editProfile(props.profile.id, requestBody).finally(() => {
     setLoading(false);
     setInEditing(false);
@@ -91,7 +75,7 @@ watch(() => props.profile, resetForm, { immediate: true });
       :labelCol="{ span: 8 }"
       :wrapperCol="{ span: 8 }"
       labelAlign="left"
-      @finish="applyEdit"
+      @finish="handleEdit"
     >
       <a-form-item label="Имя пользователя" name="username">
         <a-input

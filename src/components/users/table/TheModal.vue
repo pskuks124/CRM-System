@@ -4,7 +4,7 @@ import type { ModalState, Roles } from "@/types/admin-types";
 import { message } from "ant-design-vue";
 import { computed } from "vue";
 
-interface ModalData {
+interface ModalProps {
   title: string | null;
   ok: (() => void) | null;
   cancel: (() => void) | null;
@@ -20,7 +20,7 @@ const isBlocked = defineModel<boolean | undefined>("isBlocked", {
   default: null,
 });
 const roles = defineModel<Roles[]>("roles");
-const modalData = computed((): ModalData => {
+const modalProps = computed((): ModalProps => {
   if (!props.modalState.record) return { title: null, ok: null, cancel: null };
   const cancel = () => emit("clearModalRequired");
   const cancelRightsUpdate = () => {
@@ -113,9 +113,9 @@ const confirmFilters = async () => {
     :open="props.modalState.open"
     okText="Ок"
     cancelText="Отмена"
-    :title="modalData?.title"
-    @ok="modalData?.ok"
-    @cancel="modalData?.cancel"
+    :title="modalProps?.title"
+    @ok="modalProps?.ok"
+    @cancel="modalProps?.cancel"
   >
     <a-select
       v-if="props.modalState.type === 'filter'"

@@ -4,7 +4,7 @@ import authApi from "@/api/auth-api";
 import { ref, reactive } from "vue";
 import axios from "axios";
 import { showError } from "@/util/util";
-import { MAX_LOGIN_LENGTH, MAX_PASSWORD_LENGTH, MIN_LOGIN_LENGTH, MIN_PASSWORD_LENGTH } from "@/util/constants";
+import { VALIDATION_RULES } from "@/util/constants";
 
 interface Form extends UserRegistration {
   repeatPassword: string;
@@ -22,48 +22,12 @@ const loading = ref(false);
 const finishedRegistering = ref(false);
 
 const rules = {
-  username: [
-    {
-      required: true,
-      max: 60,
-      message: "от 1 до 60 символов русского/латинского алфавита",
-    },
-  ],
-  login: [
-    {
-      required: true,
-      min: MIN_LOGIN_LENGTH,
-      max: MAX_LOGIN_LENGTH,
-      message: "от 2 до 60 символов латинского алфавита",
-    },
-  ],
-  password: [
-    {
-      required: true,
-      min: MIN_PASSWORD_LENGTH,
-      max: MAX_PASSWORD_LENGTH,
-      message: "от 6 до 60 символов",
-    },
-  ],
+  ...VALIDATION_RULES,
   repeatPassword: [
     {
       required: true,
       validator: passwordMatchValidate,
       message: "пароли должны совпадать",
-    },
-  ],
-  email: [
-    {
-      required: true,
-      type: "email",
-      message: "адрес почты должен быть корректным",
-    },
-  ],
-  phoneNumber: [
-    {
-      required: false,
-      type: "number",
-      message: "номер телефона должен быть корректным",
     },
   ],
 };

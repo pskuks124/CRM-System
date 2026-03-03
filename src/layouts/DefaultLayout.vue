@@ -40,9 +40,6 @@ onBeforeMount(async () => {
           class="nav-link"
           >Пользователи</RouterLink
         >
-        <a-button @click="sessionStore.logout" class="button" type="primary"
-          >Выйти</a-button
-        >
       </a-drawer>
     </nav>
     <main class="main-container">
