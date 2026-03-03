@@ -1,11 +1,21 @@
 <script lang="ts" setup>
-import { ref } from "vue";
+import { onBeforeMount, ref } from "vue";
+import { useAuthStore } from "@/stores/auth/auth-store";
 import { MenuOutlined } from "@ant-design/icons-vue";
+import { tokenManager } from "@/api/token-manager";
+
+const { logout, validateToken } = useAuthStore();
 const open = ref<boolean>(false);
 
 const showDrawer = () => {
   open.value = true;
 };
+let refreshValidated = ref<boolean>(false);
+onBeforeMount(async () => {
+  if (tokenManager.refreshToken) {
+    await validateToken().then(() => (refreshValidated.value = true));
+  }
+});
 </script>
 
 <template>
@@ -21,14 +31,15 @@ const showDrawer = () => {
       >
         <RouterLink to="/profile" class="nav-link">Профиль</RouterLink>
         <RouterLink to="/" class="nav-link">Список Задач</RouterLink>
+        <a-button @click="logout" class="button" type="primary">Выйти</a-button>
       </a-drawer>
     </nav>
+
     <main class="main-container">
-      <slot />
+      <RouterView v-if="refreshValidated" />
     </main>
   </div>
 </template>
-
 <style scoped>
 .default-layout-container {
   display: flex;
@@ -37,7 +48,7 @@ const showDrawer = () => {
   width: 100%;
 }
 .navigation {
-  padding: 30px 0;
+  padding: 2rem 0;
 }
 .main-container {
   display: flex;
@@ -49,5 +60,9 @@ const showDrawer = () => {
 }
 .nav-link {
   display: block;
+  padding: 0.5rem 0;
+}
+.button {
+  margin: 1rem 0;
 }
 </style>
