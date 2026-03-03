@@ -1,12 +1,12 @@
 <script setup lang="ts">
 import { ref, reactive, watch } from "vue";
-import { updateTodo, deleteTodo } from "../api/todo-api";
-import type { Todo, Filter } from "../types/todo-types";
+import { updateTodo, deleteTodo } from "../../api/todo-api";
+import type { Todo, Filter } from "../../types/todo-types";
 import { FormOutlined } from "@ant-design/icons-vue";
 import { DeleteOutlined } from "@ant-design/icons-vue";
 import { CheckOutlined } from "@ant-design/icons-vue";
 import { CloseOutlined } from "@ant-design/icons-vue";
-import { showError } from "../util/util";
+import { showError } from "../../util/util";
 import { MAX_TASK_LENGTH, MIN_TASK_LENGTH } from "@/util/constants";
 
 const props = defineProps<{

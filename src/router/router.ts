@@ -10,10 +10,12 @@ import DefaultLayout from "../layouts/DefaultLayout.vue";
 import RegisterPage from "../pages/RegisterPage.vue";
 import AuthLayout from "../layouts/AuthLayout.vue";
 import AuthPage from "@/pages/AuthPage.vue";
-import { useAuthStore } from "@/stores/auth/auth-store";
+import { useSessionStore } from "@/stores/auth/session-store";
+import UserListPage from "@/pages/users/UserListPage.vue";
+import ViewProfilePage from "@/pages/users/ViewProfilePage.vue";
 
 const authGuard: NavigationGuard = async (_to, _from, next) => {
-  const { isAuthorized } = useAuthStore();
+  const { isAuthorized } = useSessionStore();
   if (!isAuthorized) {
     next({ name: "login" });
   } else {
@@ -21,7 +23,7 @@ const authGuard: NavigationGuard = async (_to, _from, next) => {
   }
 };
 const guestGuard: NavigationGuard = async (_to, _from, next) => {
-  const { isAuthorized } = useAuthStore();
+  const { isAuthorized } = useSessionStore();
   if (isAuthorized) {
     next({ name: "todo" });
   } else {
@@ -39,12 +41,24 @@ const routes = [
         name: "profile",
         path: "/profile",
         component: ProfilePage,
+        children: [
+          {
+            name: "view-profile",
+            path: ":id",
+            component: ViewProfilePage,
+          },
+        ],
       },
       {
         name: "todo",
         path: "/",
 
         component: ToDoListPage,
+      },
+      {
+        name: "user-list",
+        path: "/user-list",
+        component: UserListPage,
       },
     ],
   },

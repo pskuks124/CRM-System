@@ -1,10 +1,10 @@
 <script lang="ts" setup>
 import { onBeforeMount, ref } from "vue";
-import { useAuthStore } from "@/stores/auth/auth-store";
+import { useSessionStore } from "@/stores/auth/session-store";
 import { MenuOutlined } from "@ant-design/icons-vue";
 import { tokenManager } from "@/api/token-manager";
 
-const { logout, validateToken } = useAuthStore();
+const sessionStore = useSessionStore();
 const open = ref<boolean>(false);
 
 const showDrawer = () => {
@@ -13,7 +13,10 @@ const showDrawer = () => {
 let refreshValidated = ref<boolean>(false);
 onBeforeMount(async () => {
   if (tokenManager.refreshToken) {
-    await validateToken().then(() => (refreshValidated.value = true));
+    await sessionStore.validateToken().then(async () => {
+      refreshValidated.value = true;
+      await sessionStore.fetchProfile();
+    });
   }
 });
 </script>
@@ -31,10 +34,14 @@ onBeforeMount(async () => {
       >
         <RouterLink to="/profile" class="nav-link">Профиль</RouterLink>
         <RouterLink to="/" class="nav-link">Список Задач</RouterLink>
-        <a-button @click="logout" class="button" type="primary">Выйти</a-button>
+        <RouterLink
+          v-if="sessionStore.adminAccess || sessionStore.moderatorAccess"
+          to="/user-list"
+          class="nav-link"
+          >Пользователи</RouterLink
+        >
       </a-drawer>
     </nav>
-
     <main class="main-container">
       <RouterView v-if="refreshValidated" />
     </main>
@@ -45,24 +52,27 @@ onBeforeMount(async () => {
   display: flex;
   flex-direction: row;
   justify-content: space-between;
+  flex-direction: row;
+  justify-content: space-between;
   width: 100%;
+  height: 100%;
 }
 .navigation {
-  padding: 2rem 0;
+  padding: 30px 0;
 }
 .main-container {
   display: flex;
   flex-direction: column;
   margin: auto;
-  max-width: 40rem;
+  min-width: 40rem;
   font-size: 2rem;
-  width: 50rem;
+  height: 100%;
 }
 .nav-link {
   display: block;
   padding: 0.5rem 0;
 }
 .button {
-  margin: 1rem 0;
+  margin: 2rem 0;
 }
 </style>

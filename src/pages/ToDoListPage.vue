@@ -1,9 +1,9 @@
 <script setup lang="ts">
 import { ref, reactive, onMounted, onUnmounted } from "vue";
-import TaskForm from "../components/TaskForm.vue";
+import TaskForm from "../components/todo/TaskForm.vue";
 import { refreshTodos } from "../api/todo-api";
-import TabList from "../components/TabList.vue";
-import TaskList from "../components/TaskList.vue";
+import TabList from "../components/todo/TabList.vue";
+import TaskList from "../components/todo/TaskList.vue";
 import type { Todo, TodoInfo, Filter } from "../types/todo-types";
 import { showError } from "../util/util";
 
